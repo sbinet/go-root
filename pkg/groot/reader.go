@@ -1,3 +1,4 @@
+
 package groot
 
 import (
@@ -63,26 +64,26 @@ const kByteCountMask = 0x40000000
 
 //
 type FileReader struct {
-	r             io.ReadSeeker
-	hdr           fileHeader
-	url           string
+	r   io.ReadSeeker
+	hdr fileHeader
+	url string
 
-	dirs []Directory
+	dirs   []Directory
 	diridx int
-	
-	keys []Key
+
+	keys   []Key
 	keyidx int
 
 	buffers []string
-	bufidx int
+	bufidx  int
 
 	//hists []Histogram
 	//histidx int
 
-	seekinfo uint64
+	seekinfo   uint64
 	nbytesinfo uint64
 
-	streamers []string
+	streamers    []string
 	streamerinfo string
 
 	offset        uint64
@@ -91,12 +92,12 @@ type FileReader struct {
 	title         string
 	dir           Directory
 
-	datimeC       time.Time
-	datimeM       time.Time
-	fileClass     Class
-	factory       ClassFactory
+	datimeC   time.Time
+	datimeM   time.Time
+	fileClass Class
+	factory   ClassFactory
 
-	streamerInfo  Key
+	streamerInfo Key
 }
 
 type fileHeader struct {
@@ -109,18 +110,18 @@ type fileHeader struct {
 }
 
 type Key struct {
-	offset uint64
-	nbytes uint64
-	version uint16
-	objlen uint32
-	datime uint32 //fixme: use time.Time ?
-	keylen uint16
-	cycle  uint16
+	offset   uint64
+	nbytes   uint64
+	version  uint16
+	objlen   uint32
+	datime   uint32 //fixme: use time.Time ?
+	keylen   uint16
+	cycle    uint16
 	seekkey  uint64
 	seekpdir uint64
-	class  string
-	name string
-	title string
+	class    string
+	name     string
+	title    string
 }
 
 func (k *Key) dataoffset() uint64 {
@@ -259,7 +260,7 @@ func NewFileReader(name string) (f *FileReader, err error) {
 	key := br.readKey(f.r)
 	pos, err := f.r.Seek(0, os.SEEK_CUR)
 	println("current-offset:", pos)
-	println("key:",key.name)
+	println("key:", key.name)
 	f.name = key.name
 	f.title = key.title
 	return f, err
