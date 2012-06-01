@@ -26,6 +26,17 @@ func main() {
 
 	fmt.Printf("f: %s (version=%v)\n", f.Name(), f.Version())
 
+	dir := f.Dir()
+	if dir == nil {
+		fmt.Printf("err: invalid root directory\n")
+		os.Exit(1)
+	}
+	keys := dir.Keys()
+	fmt.Printf("  #%d key(s)\n", len(keys))
+	for i,k := range keys {
+		fmt.Printf("key[%d]: [name=%s] [title=%s] [type=%s]\n",
+			i, k.Name(), k.Title(), k.Class())
+	}
 }
 
 // EOF

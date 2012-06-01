@@ -245,4 +245,8 @@ func (f *FileReader) Version() uint32 {
 	return f.version
 }
 
+func (f *FileReader) Dir() *Directory {
+	return &f.root_dir
+}
+
 // EOF

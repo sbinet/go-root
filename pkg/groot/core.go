@@ -80,6 +80,10 @@ type Directory struct {
 	seek_keys   int64     // location of keys record on file
 }
 
+func (d *Directory) Keys() []Key {
+	return d.keys
+}
+
 func (d *Directory) record_size(version uint32) uint32 {
 	var nbytes uint32 = sz_uint16
 	nbytes += sz_uint32 // ctime
@@ -289,5 +293,20 @@ func (k *Key) init_from_buffer(f io.Reader) (err error) {
 	return err
 }
 
+func (k *Key) Size() uint32 {
+	return k.objsz
+}
+
+func (k *Key) Class() string {
+	return k.class
+}
+
+func (k *Key) Name() string {
+	return k.name
+}
+
+func (k *Key) Title() string {
+	return k.title
+}
 
 // EOF
