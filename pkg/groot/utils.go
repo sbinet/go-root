@@ -3,10 +3,18 @@ package groot
 import (
 	"encoding/binary"
 	"io"
+	"os"
 )
 
 type breader struct {
 	order binary.ByteOrder
+}
+
+func (b breader) skip(r io.Seeker, nbytes int64) {
+	_, err := r.Seek(nbytes, os.SEEK_CUR)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (b breader) tobo() binary.ByteOrder {
@@ -217,6 +225,9 @@ func (b breader) readTString(r io.Reader) string {
 	if n == 255 {
 		// large string
 		n = int(b.ntou4(r))
+	}
+	if n == 0 {
+		return ""
 	}
 	v := b.ntobyte(r)
 	if v == 0 {

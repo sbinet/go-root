@@ -9,7 +9,7 @@ import (
 
 func main() {
 	fmt.Printf("== test go-root ==\n")
-	f, err := groot.NewFileReader("ntuple.0.root")
+	f, err := groot.NewFileReader("small.ntuple.0.root")
 	if err != nil {
 		fmt.Printf("**error**: %v\n", err)
 		os.Exit(1)
