@@ -79,6 +79,8 @@ type FileReader struct {
 	nbytes_free uint32 // number of bytes for free segments structure
 	//nfree int
 	nbytes_name uint32 // number of bytes in TNamed at creation time
+	seek_info   int64  // location on disk of streamerinfos
+	nbytes_info uint32 // number of bytes for streamerinfos?
 }
 
 func NewFileReader(name string) (f *FileReader, err error) {
@@ -234,6 +236,16 @@ func (f *FileReader) read_header() (err error) {
 	f.nbytes_name = br.ntou4(f.f)
 	println("nbytes-free:", f.nbytes_free)
 	println("nbytes-name:", f.nbytes_name)
+	/*units*/ br.ntobyte(f.f)
+	/*compress*/ br.ntou4(f.f)
+	if f.version >= 1000000 {
+		f.seek_info = int64(br.ntou8(f.f))
+	} else {
+		f.seek_info = int64(br.ntou4(f.f))
+	}
+	f.nbytes_info = br.ntou4(f.f)
+	println("seek-info:",f.seek_info)
+	println("nbytes-info:", f.nbytes_info)
 	return nil
 }
 
