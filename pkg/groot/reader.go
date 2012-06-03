@@ -89,13 +89,13 @@ func NewFileReader(name string) (f *FileReader, err error) {
 		order:    binary.BigEndian,
 		unzipers: make(map[string]unzip_fct),
 	}
-	
+
 	f.f, err = os.Open(name)
 	if err != nil {
 		return nil, err
 	}
 
-	f.root_dir = Directory{file:f}
+	f.root_dir = Directory{file: f}
 
 	err = f.initialize()
 	if err != nil {
@@ -138,9 +138,9 @@ func (f *FileReader) initialize() (err error) {
 
 	nbytes := f.nbytes_name + f.root_dir.record_size(f.version)
 	println("nbytes:", nbytes)
-	
+
 	// read directory info
-	_, err = f.f.Seek(f.beg + int64(f.nbytes_name), os.SEEK_SET)
+	_, err = f.f.Seek(f.beg+int64(f.nbytes_name), os.SEEK_SET)
 	if err != nil {
 		return err
 	}
@@ -149,15 +149,14 @@ func (f *FileReader) initialize() (err error) {
 		return err
 	}
 
-	nk := sz_int32 // Key::fNumberOfBytes
-	nk += sz_int16 // Key::fVersion
-	nk += 2*sz_int32 // Key::fObjectSize, Date
-	nk += 2*sz_int16 // Key::fKeyLength, fCycle
-	nk += 2*sz_int32 // Key::fSeekKey, fSeekParentDirectory
+	nk := sz_int32     // Key::fNumberOfBytes
+	nk += sz_int16     // Key::fVersion
+	nk += 2 * sz_int32 // Key::fObjectSize, Date
+	nk += 2 * sz_int16 // Key::fKeyLength, fCycle
+	nk += 2 * sz_int32 // Key::fSeekKey, fSeekParentDirectory
 	// WARNING: the above is sz_int32 since we are at beginning of file...
 
-	
-	_, err = f.f.Seek(f.beg + int64(nk), os.SEEK_SET)
+	_, err = f.f.Seek(f.beg+int64(nk), os.SEEK_SET)
 	if err != nil {
 		return err
 	}
@@ -169,13 +168,13 @@ func (f *FileReader) initialize() (err error) {
 	if cname != "TFile" {
 		return fmt.Errorf("groot: expected [TFile]. got [%v]", cname)
 	}
-	println("f-clsname ["+cname+"]")
+	println("f-clsname [" + cname + "]")
 
 	cname = br.readTString(f.f)
-	println("f-cname   ["+cname+"]")
+	println("f-cname   [" + cname + "]")
 
 	f.title = br.readTString(f.f)
-	println("f-title   ["+f.title+"]")
+	println("f-title   [" + f.title + "]")
 
 	if f.root_dir.nbytes_name < 10 || f.root_dir.nbytes_name > 1000 {
 		return fmt.Errorf("groot: can't read directory info.")
@@ -244,7 +243,7 @@ func (f *FileReader) read_header() (err error) {
 		f.seek_info = int64(br.ntou4(f.f))
 	}
 	f.nbytes_info = br.ntou4(f.f)
-	println("seek-info:",f.seek_info)
+	println("seek-info:", f.seek_info)
 	println("nbytes-info:", f.nbytes_info)
 
 	// read streamer infos
@@ -257,7 +256,7 @@ func (f *FileReader) read_streamer_infos() (err error) {
 	if err != nil {
 		return err
 	}
-	println("buf:",len(buf))
+	println("buf:", len(buf))
 	return err
 }
 

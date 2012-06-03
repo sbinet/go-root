@@ -174,7 +174,7 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 
 	d.keys = make([]Key, nkeys)
 	for i := 0; i < nkeys; i++ {
-		println("--key--",i)
+		println("--key--", i)
 		key, err := NewKey(d.file, 0, 0)
 		if err != nil {
 			return -1, err
@@ -236,10 +236,10 @@ type Key struct {
 
 func NewKey(f *FileReader, pos int64, nbytes uint32) (k *Key, err error) {
 	k = &Key{
-		file: f,
+		file:     f,
 		seek_key: pos,
-		nbytes: nbytes,
-		version: 2,
+		nbytes:   nbytes,
+		version:  2,
 	}
 	if pos > g_START_BIG_FILE {
 		k.version += 1000
@@ -282,13 +282,13 @@ func (k *Key) init_from_buffer(f io.Reader) (err error) {
 	println("key-seek-pdir:", k.seek_parent_dir)
 
 	k.class = br.readTString(f)
-	println("key-class ["+k.class+"]")
+	println("key-class [" + k.class + "]")
 
 	k.name = br.readTString(f)
-	println("key-name  ["+k.name+"]")
+	println("key-name  [" + k.name + "]")
 
 	k.title = br.readTString(f)
-	println("key-title ["+k.title+"]")
+	println("key-title [" + k.title + "]")
 
 	return err
 }

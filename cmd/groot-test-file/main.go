@@ -9,6 +9,7 @@ import (
 )
 
 var fname = flag.String("f", "small.ntuple.0.root", "ROOT file to inspect")
+
 func main() {
 	fmt.Printf("== test go-root ==\n")
 	flag.Parse()
@@ -33,7 +34,7 @@ func main() {
 	}
 	keys := dir.Keys()
 	fmt.Printf("  #%d key(s)\n", len(keys))
-	for i,k := range keys {
+	for i, k := range keys {
 		fmt.Printf("key[%d]: [name=%s] [title=%s] [type=%s]\n",
 			i, k.Name(), k.Title(), k.Class())
 	}
