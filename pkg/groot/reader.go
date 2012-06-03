@@ -246,7 +246,19 @@ func (f *FileReader) read_header() (err error) {
 	f.nbytes_info = br.ntou4(f.f)
 	println("seek-info:",f.seek_info)
 	println("nbytes-info:", f.nbytes_info)
-	return nil
+
+	// read streamer infos
+	return f.read_streamer_infos()
+}
+
+func (f *FileReader) read_streamer_infos() (err error) {
+	buf := make([]byte, int(f.nbytes_info))
+	_, err = f.f.ReadAt(buf, f.seek_info)
+	if err != nil {
+		return err
+	}
+	println("buf:",len(buf))
+	return err
 }
 
 func (f *FileReader) Name() string {
