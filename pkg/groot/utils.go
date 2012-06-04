@@ -1,8 +1,12 @@
 package groot
 
 import (
+	"bytes"
+	"compress/zlib"
 	"encoding/binary"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"time"
 )
@@ -289,4 +293,37 @@ func datime2time(d uint32) time.Time {
 		int(hour), int(min), int(sec), nsec, time.UTC)
 }
 
+// unzip_root_buffer implements the ROOT unzip algorithm
+func unzip_root_buffer(src []byte) (buf []byte, err error) {
+	const HDRSIZE = 9
+	const DEFLATE = 8
+
+	buf = make([]byte, 0)
+
+	// check header
+
+	if len(src) < HDRSIZE {
+		return buf, fmt.Errorf("groot.utils.unzip: too small source")
+	}
+
+	if src[0] != byte('Z') || src[1] != byte('L') || src[2] != DEFLATE {
+		return buf, fmt.Errorf("groot.utils.unzip: error in header: %v",
+			src[:3])
+	}
+
+	rbuf := src[HDRSIZE:]
+	dec, err := zlib.NewReader(bytes.NewBuffer(rbuf))
+	if err != nil {
+		return []byte{}, err
+	}
+	buf, err = ioutil.ReadAll(dec)
+	if err != nil {
+		return []byte{}, err
+	}
+	err = dec.Close()
+	if err != nil {
+		return []byte{}, err
+	}
+	return buf, err
+}
 // EOF
