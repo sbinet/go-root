@@ -53,3 +53,12 @@ the hierarchical content of a ``ROOT`` file:
   key: name='CollectionTree' title='CollectionTree' type=TTree
   key: name='egamma' title='egamma' type=TTree
   ::bye.
+
+
+Documentation
+=============
+
+``groot`` documentation can be found over there:
+
+http://go.pkgdoc.org/bitbucket.org/binet/go-root/pkg/groot
+
