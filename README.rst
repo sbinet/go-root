@@ -39,3 +39,17 @@ the hierarchical content of a ``ROOT`` file:
   key: name='MetaDataHdr' title='MetaDataHdr' type=TTree
   ::bye.
 
+  $ groot-ls -f my.d3pd.root
+  :: groot-ls ::
+  file: 'my.d3pd.root' (version=52200)
+  / -> #5 key(s)
+  key: name='Schema' title='' type=AttributeListLayout
+  key: name='egammaMeta' title='egammaMeta' type=TDirectory
+    /egammaMeta -> #1 key(s)
+    key: name='TrigConfTree' title='TrigConfTree' type=TTree
+  key: name='Lumi' title='Lumi' type=TDirectory
+    /Lumi -> #1 key(s)
+    key: name='egamma' title='object title' type=TObjString
+  key: name='CollectionTree' title='CollectionTree' type=TTree
+  key: name='egamma' title='egamma' type=TTree
+  ::bye.
