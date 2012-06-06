@@ -20,12 +20,27 @@ func normpath(path []string) string {
 	return name
 }
 
+func inspect(dir *groot.Directory, path []string, indent string) {
+	name := normpath(path)
+	if dir == nil {
+		fmt.Printf("err: invalid directory [%s]\n", name)
+		return
+	}
+	keys := dir.Keys()
+	fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
+	for _, k := range keys {
+		fmt.Printf("%skey: name='%s' title='%s' type=%s\n",
+			indent, k.Name(), k.Title(), k.Class())
+		if v, ok := k.Value().(*groot.Directory); ok {
+			path := append(path, k.Name())
+			inspect(v, path, indent+"  ")
+		}
+	}
+}
+
 func main() {
 	fmt.Printf(":: groot-ls ::\n")
 	flag.Parse()
-
-	nfactories := groot.Factory.NumKey()
-	fmt.Printf(":: groot has registered %d factory-type(s)\n", nfactories)
 
 	f, err := groot.NewFileReader(*fname)
 	if err != nil {
@@ -40,25 +55,6 @@ func main() {
 
 	fmt.Printf("file: '%s' (version=%v)\n", f.Name(), f.Version())
 
-	var inspect func(*groot.Directory, []string, string)
-	inspect = func(dir *groot.Directory, path []string, indent string) {
-		name := normpath(path)
-		if dir == nil {
-			fmt.Printf("err: invalid directory [%s]\n", name)
-			return
-		}
-		keys := dir.Keys()
-		fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
-		for _, k := range keys {
-			fmt.Printf("%skey: name='%s' title='%s' type=%s\n",
-				indent, k.Name(), k.Title(), k.Class())
-			if v, ok := k.Value().(*groot.Directory); ok {
-				path := append(path, k.Name())
-				inspect(v, path, indent+"  ")
-			}
-		}
-	}
-		
 	dir := f.Dir()
 	inspect(dir, []string{"/"}, "")
 
