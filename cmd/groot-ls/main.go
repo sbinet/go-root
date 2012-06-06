@@ -1,3 +1,4 @@
+// groot-ls recursively dumps the hierarchy tree of a ROOT file
 package main
 
 import (
@@ -11,7 +12,7 @@ import (
 var fname = flag.String("f", "small.ntuple.0.root", "ROOT file to inspect")
 
 func main() {
-	fmt.Printf("== test go-root ==\n")
+	fmt.Printf(":: groot-ls ::\n")
 	flag.Parse()
 
 	f, err := groot.NewFileReader(*fname)
@@ -21,11 +22,11 @@ func main() {
 	}
 
 	if f == nil {
-		fmt.Printf("invalid file pointer\n")
+		fmt.Printf("**error**: invalid file pointer\n")
 		os.Exit(1)
 	}
 
-	fmt.Printf("f: %s (version=%v)\n", f.Name(), f.Version())
+	fmt.Printf("file: '%s' (version=%v)\n", f.Name(), f.Version())
 
 	var inspect func(*groot.Directory, string, string)
 	inspect = func(dir *groot.Directory, name, indent string) {
