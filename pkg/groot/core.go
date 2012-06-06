@@ -112,7 +112,7 @@ func (d *Directory) ROOTEncode(buf []byte) error {
 	panic("groot.Directory.ROOTEncode: sorry, not implemented")
 }
 
-func (d *Directory) setFile(f *FileReader) error {
+func (d *Directory) SetFile(f *FileReader) error {
 	d.file = f
 	return nil
 }
@@ -346,8 +346,8 @@ func (k *Key) Value() (v interface{}) {
 	}
 
 	vv := factory()
-	if vv,ok := vv.Interface().(rootSetFiler); ok {
-		err := vv.setFile(k.file)
+	if vv,ok := vv.Interface().(FileSetter); ok {
+		err := vv.SetFile(k.file)
 		if err != nil {
 			return v
 		}

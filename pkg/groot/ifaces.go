@@ -55,8 +55,12 @@ type ROOTStreamer interface {
 	ROOTEncode(buf []byte) error
 }
 
-type rootSetFiler interface {
-	setFile(f *FileReader) error
+// FileSetter is the interface allowing to reset the ownership of a ROOT object
+// w.r.t a given file
+//
+// FIXME: this (obviously) shouldn't be restricted to a FileReader
+type FileSetter interface {
+	SetFile(f *FileReader) error
 }
 
 // EOF
