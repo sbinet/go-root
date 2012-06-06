@@ -167,13 +167,13 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 
 func init() {
 
-	make_dir := func() reflect.Value {
+	new_dir := func() reflect.Value {
 		o := &Directory{file: nil, keys: make([]Key, 0)}
 		return reflect.ValueOf(o)
 	}
 
-	Factory.db["TDirectory"] = make_dir
-	Factory.db["*groot.Directory"] = make_dir
+	Factory.db["TDirectory"] = new_dir
+	Factory.db["*groot.Directory"] = new_dir
 }
 
 
