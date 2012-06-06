@@ -36,17 +36,8 @@ func (f *factory) Get(n string) FactoryFct {
 }
 
 // the registry of all factory functions, by class name
-var Factory factory
-
-func init() {
-	Factory = factory{
-		db: make(map[string]FactoryFct),
-	}
-
-	Factory.db["TDirectory"] = func() reflect.Value {
-		o := &Directory{file: nil, keys: make([]Key, 0)}
-		return reflect.ValueOf(o)
-	}
+var Factory factory = factory{
+	db: make(map[string]FactoryFct),
 }
 
 // EOF

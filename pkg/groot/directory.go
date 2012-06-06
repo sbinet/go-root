@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"time"
 )
 
@@ -163,5 +164,17 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 	}
 	return nkeys, nil
 }
+
+func init() {
+
+	make_dir := func() reflect.Value {
+		o := &Directory{file: nil, keys: make([]Key, 0)}
+		return reflect.ValueOf(o)
+	}
+
+	Factory.db["TDirectory"] = make_dir
+	Factory.db["*groot.Directory"] = make_dir
+}
+
 
 // EOF
