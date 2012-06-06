@@ -366,16 +366,6 @@ func (k *Key) Value() (v interface{}) {
 	return v
 }
 
-func (k *Key) TBuffer() (bb *Buffer, err error) {
-	buf, err := k.Buffer()
-	if err != nil {
-		return
-	}
-
-	bb, err = NewBuffer(buf, k.file.order, 0)
-	return
-}
-
 func (k *Key) Size() uint32 {
 	return k.objsz
 }
