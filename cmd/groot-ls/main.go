@@ -9,11 +9,14 @@ import (
 	"bitbucket.org/binet/go-root/pkg/groot"
 )
 
-var fname = flag.String("f", "small.ntuple.0.root", "ROOT file to inspect")
+var fname = flag.String("f", "ntuple.root", "ROOT file to inspect")
 
 func main() {
 	fmt.Printf(":: groot-ls ::\n")
 	flag.Parse()
+
+	nfactories := groot.Factory.NumKey()
+	fmt.Printf(":: groot has registered %d factory-type(s)\n", nfactories)
 
 	f, err := groot.NewFileReader(*fname)
 	if err != nil {
