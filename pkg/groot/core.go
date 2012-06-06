@@ -8,6 +8,13 @@ import (
 	"time"
 )
 
+var g_verbose = false
+func printf(format string, args ...interface{}) {
+	if g_verbose {
+		fmt.Printf(format, args...)
+	}
+}
+
 const (
 	sz_int16  = 2
 	sz_int32  = 4
@@ -80,15 +87,34 @@ func (d *Directory) from_buffer(buf io.Reader) (err error) {
 		d.seek_parent = int64(br.ntoi4(buf))
 		d.seek_keys = int64(br.ntoi4(buf))
 	}
-	println("dir-version:", version)
-	println("dir-ctime:", d.ctime.String())
-	println("dir-mtime:", d.mtime.String())
-	println("dir-nbytes-keys:", d.nbytes_keys)
-	println("dir-nbytes-name:", d.nbytes_name)
-	println("dir-seek-dir:", d.seek_dir)
-	println("dir-seek-parent:", d.seek_parent)
-	println("dir-seek-keys:", d.seek_keys)
+	printf("dir-version: %v\n", version)
+	printf("dir-ctime: %v\n", d.ctime.String())
+	printf("dir-mtime: %v\n", d.mtime.String())
+	printf("dir-nbytes-keys: %v\n", d.nbytes_keys)
+	printf("dir-nbytes-name: %v\n", d.nbytes_name)
+	printf("dir-seek-dir: %v\n", d.seek_dir)
+	printf("dir-seek-parent: %v\n", d.seek_parent)
+	printf("dir-seek-keys: %v\n", d.seek_keys)
 	return err
+}
+
+func (d *Directory) ROOTDecode(buf []byte) (err error) {
+	iobuf := bytes.NewBuffer(buf)
+	err = d.from_buffer(iobuf)
+	if err != nil {
+		return err
+	}
+	_, err = d.read_keys()
+	return err
+}
+
+func (d *Directory) ROOTEncode(buf []byte) error {
+	panic("groot.Directory.ROOTEncode: sorry, not implemented")
+}
+
+func (d *Directory) setFile(f *FileReader) error {
+	d.file = f
+	return nil
 }
 
 // read_keys reads the keys from a Directory
@@ -98,10 +124,10 @@ func (d *Directory) from_buffer(buf io.Reader) (err error) {
 // as a single data record.
 func (d *Directory) read_keys() (nkeys int, err error) {
 
-	println("--read_keys--", d.seek_keys, d.nbytes_keys)
+	printf("--read_keys-- %v %v\n", d.seek_keys, d.nbytes_keys)
 	hdr, err := NewKey(d.file, d.seek_keys, d.nbytes_keys)
 	if err != nil {
-		println("groot.Directory.read_keys:",err.Error())
+		printf("groot.Directory.read_keys: %v\n",err.Error())
 		return -1, err
 	}
 	if hdr == nil {
@@ -110,19 +136,19 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 
 	cur, err := d.file.f.Seek(0, os.SEEK_CUR)
 	if err != nil {
-		println("groot.Directory.read_keys:",err.Error())
+		printf("groot.Directory.read_keys: %v\n",err.Error())
 		return -1, err
 	}
 	defer d.file.f.Seek(cur, os.SEEK_SET)
 
 	buf := make([]byte, int(d.nbytes_keys))
 
-	println("---", len(buf), d.seek_keys)
+	printf("--- %v %v\n", len(buf), d.seek_keys)
 	_, err = d.file.f.ReadAt(buf, d.seek_keys)
 	if err != nil {
-		println("seek_keys:",d.seek_keys)
-		println("len(buf):",len(buf))
-		println("groot.Directory.read_keys-ReadAt:",err.Error())
+		printf("seek_keys: %v\n",d.seek_keys)
+		printf("len(buf): %v\n",len(buf))
+		printf("groot.Directory.read_keys-ReadAt: %v\n",err.Error())
 		return -1, err
 	}
 
@@ -138,11 +164,11 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 
 	br := d.file.breader()
 	nkeys = int(br.ntoi4(f))
-	println("dir-nkeys:", nkeys)
+	printf("dir-nkeys: %v\n", nkeys)
 
 	d.keys = make([]Key, nkeys)
 	for i := 0; i < nkeys; i++ {
-		println("--key--", i)
+		printf("--key-- %v\n", i)
 		key, err := NewKey(d.file, 0, 0)
 		if err != nil {
 			return -1, err
@@ -221,23 +247,23 @@ func (k *Key) init_from_buffer(f io.Reader) (err error) {
 
 	// read the key structure from the buffer
 	k.nbytes = br.ntou4(f)
-	println("key-nbytes:", k.nbytes)
+	printf("key-nbytes: %v\n", k.nbytes)
 
-	println("key-version:", k.version)
+	printf("key-version: %v\n", k.version)
 
 	k.version = uint32(br.ntou2(f))
-	println("key-version:", k.version)
+	printf("key-version: %v\n", k.version)
 	k.objsz = uint32(br.ntoi4(f))
-	println("key-objsz:", k.objsz)
+	printf("key-objsz: %v\n", k.objsz)
 
 	k.date = datime2time(br.ntou4(f))
-	println("key-cdate:", k.date.String())
+	printf("key-cdate: %v\n", k.date.String())
 
 	k.keysz = br.ntou2(f)
-	println("key-keysz:", k.keysz)
+	printf("key-keysz: %v\n", k.keysz)
 
 	k.cycle = br.ntou2(f)
-	println("key-cycle:", k.cycle)
+	printf("key-cycle: %v\n", k.cycle)
 
 	if k.version > 1000 {
 		k.seek_key = br.ntoi8(f)
@@ -246,17 +272,17 @@ func (k *Key) init_from_buffer(f io.Reader) (err error) {
 		k.seek_key = int64(br.ntoi4(f))
 		k.seek_parent_dir = int64(br.ntoi4(f))
 	}
-	println("key-seek-key:", k.seek_key)
-	println("key-seek-pdir:", k.seek_parent_dir)
+	printf("key-seek-key: %v\n", k.seek_key)
+	printf("key-seek-pdir: %v\n", k.seek_parent_dir)
 
 	k.class = br.readTString(f)
-	println("key-class [" + k.class + "]")
+	printf("key-class [%v]\n", k.class)
 
 	k.name = br.readTString(f)
-	println("key-name  [" + k.name + "]")
+	printf("key-name  [%v]\n", k.name)
 
 	k.title = br.readTString(f)
-	println("key-title [" + k.title + "]")
+	printf("key-title [%v]\n", k.title)
 
 	return err
 }
@@ -266,21 +292,21 @@ func (k *Key) Buffer() (buf []byte, err error) {
 	buf = make([]byte, 0)
 
 	if k.keysz == 0 {
-		println("groot.Key.Buffer: key size is zero")
+		printf("groot.Key.Buffer: key size is zero\n")
 		return
 	}
 
 	if k.nbytes == 0 {
-		println("groot.Key.Buffer: nbytes is zero")
+		printf("groot.Key.Buffer: nbytes is zero\n")
 		return
 	}
 
-	println("--Key.Buffer--")
-	println("nbytes:",k.nbytes)
-	println("keysz:",k.keysz)
-	println("objsz:",k.objsz)
-	println("seek-key:",k.seek_key)
-	println("compressed:", (k.objsz > (k.nbytes - uint32(k.keysz))))
+	printf("--Key.Buffer--\n")
+	printf("nbytes: %v\n",k.nbytes)
+	printf("keysz: %v\n",k.keysz)
+	printf("objsz: %v\n",k.objsz)
+	printf("seek-key: %v\n",k.seek_key)
+	printf("compressed: %v\n", (k.objsz > (k.nbytes - uint32(k.keysz))))
 
 	if k.objsz <= (k.nbytes - uint32(k.keysz)) {
 		bufsz := int(k.nbytes - uint32(k.keysz))
@@ -288,7 +314,7 @@ func (k *Key) Buffer() (buf []byte, err error) {
 			bufsz = int(k.nbytes)
 		}
 		buf = make([]byte, bufsz)
-		println("***",len(buf), k.seek_key)
+		printf("*** %v %v\n",len(buf), k.seek_key)
 		_, err = k.file.f.ReadAt(buf, k.seek_key)
 		if err != nil {
 			return []byte{}, err
@@ -311,6 +337,33 @@ func (k *Key) Buffer() (buf []byte, err error) {
 		}
 	}
 	return
+}
+
+func (k *Key) Value() (v interface{}) {
+	factory := Factory.Get(k.Class())
+	if factory == nil {
+		return v
+	}
+
+	vv := factory()
+	if vv,ok := vv.Interface().(rootSetFiler); ok {
+		err := vv.setFile(k.file)
+		if err != nil {
+			return v
+		}
+	}
+	if vv,ok := vv.Interface().(ROOTStreamer); ok {
+		buf, err := k.Buffer()
+		if err != nil {
+			return v
+		}
+		err = vv.ROOTDecode(buf)
+		if err != nil {
+			return v
+		}
+	}
+	v = vv.Interface()
+	return v
 }
 
 func (k *Key) TBuffer() (bb *Buffer, err error) {

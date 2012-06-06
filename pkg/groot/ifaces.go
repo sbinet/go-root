@@ -46,4 +46,17 @@ type ClassFactory interface {
 	Create(name string) Class
 }
 
+// ROOTStreamer is the interface describing data that provides its own
+// routine for encoding and decoding transmitted values sent to a ROOT file.
+type ROOTStreamer interface {
+	// de-serialize into the current value using 'buf' as input
+	ROOTDecode(buf []byte) error
+	// serialize the current value using 'buf' as output
+	ROOTEncode(buf []byte) error
+}
+
+type rootSetFiler interface {
+	setFile(f *FileReader) error
+}
+
 // EOF

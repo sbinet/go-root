@@ -84,7 +84,7 @@ func (f *FileReader) initialize() (err error) {
 	defer f.f.Seek(cur, os.SEEK_SET)
 
 	nbytes := f.nbytes_name + f.root_dir.record_size(f.version)
-	println("nbytes:", nbytes)
+	printf("nbytes: %v\n", nbytes)
 
 	// read directory info
 	_, err = f.f.Seek(f.beg+int64(f.nbytes_name), os.SEEK_SET)
@@ -115,13 +115,13 @@ func (f *FileReader) initialize() (err error) {
 	if cname != "TFile" {
 		return fmt.Errorf("groot: expected [TFile]. got [%v]", cname)
 	}
-	println("f-clsname [" + cname + "]")
+	printf("f-clsname [%v]\n", cname)
 
 	cname = br.readTString(f.f)
-	println("f-cname   [" + cname + "]")
+	printf("f-cname   [%v]\n", cname)
 
 	f.title = br.readTString(f.f)
-	println("f-title   [" + f.title + "]")
+	printf("f-title   [%v]\n", f.title)
 
 	if f.root_dir.nbytes_name < 10 || f.root_dir.nbytes_name > 1000 {
 		return fmt.Errorf("groot: can't read directory info.")
@@ -135,7 +135,7 @@ func (f *FileReader) initialize() (err error) {
 	if err != nil {
 		return err
 	}
-	println("f-dir-nkeys:", nkeys)
+	printf("f-dir-nkeys: %v\n", nkeys)
 	return nil
 }
 
@@ -158,7 +158,7 @@ func (f *FileReader) read_header() (err error) {
 		if err != nil {
 			return err
 		}
-		println("hdr:", string(hdr))
+		printf("hdr: %v\n", string(hdr))
 		if string(hdr) != "root" {
 			return fmt.Errorf(
 				"groot: file [%s] is not a ROOT file (%v)",
@@ -167,7 +167,7 @@ func (f *FileReader) read_header() (err error) {
 	}
 	f.version = br.ntou4(f.f)
 	f.beg = int64(br.ntou4(f.f))
-	println("beg:", f.beg)
+	printf("beg: %v\n", f.beg)
 	if f.version >= 1000000 {
 		f.end = int64(br.ntou8(f.f))
 		f.seek_free = int64(br.ntou8(f.f))
@@ -175,13 +175,13 @@ func (f *FileReader) read_header() (err error) {
 		f.end = int64(br.ntou4(f.f))
 		f.seek_free = int64(br.ntou4(f.f))
 	}
-	println("end:", f.end)
-	println("seek-free:", f.seek_free)
+	printf("end: %v\n", f.end)
+	printf("seek-free: %v\n", f.seek_free)
 	f.nbytes_free = br.ntou4(f.f)
 	/*nfree*/ br.ntoi4(f.f)
 	f.nbytes_name = br.ntou4(f.f)
-	println("nbytes-free:", f.nbytes_free)
-	println("nbytes-name:", f.nbytes_name)
+	printf("nbytes-free: %v\n", f.nbytes_free)
+	printf("nbytes-name: %v\n", f.nbytes_name)
 	/*units*/ br.ntobyte(f.f)
 	/*compress*/ br.ntou4(f.f)
 	if f.version >= 1000000 {
@@ -190,8 +190,8 @@ func (f *FileReader) read_header() (err error) {
 		f.seek_info = int64(br.ntou4(f.f))
 	}
 	f.nbytes_info = br.ntou4(f.f)
-	println("seek-info:", f.seek_info)
-	println("nbytes-info:", f.nbytes_info)
+	printf("seek-info: %v\n", f.seek_info)
+	printf("nbytes-info: %v\n", f.nbytes_info)
 
 	// read streamer infos
 	return f.read_streamer_infos()
@@ -203,7 +203,7 @@ func (f *FileReader) read_streamer_infos() (err error) {
 	if err != nil {
 		return err
 	}
-	println("buf:", len(buf))
+	printf("buf: %v\n", len(buf))
 	return err
 }
 
