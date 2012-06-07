@@ -32,7 +32,7 @@ import (
 //    - to write an object in the Current Directory
 //    - to write a new ntuple buffer
 type Key struct {
-	file *FileReader
+	file *File
 	//bufsz  uint32
 	//buffer []byte
 
@@ -51,7 +51,7 @@ type Key struct {
 	title           string    // title of the object
 }
 
-func NewKey(f *FileReader, pos int64, nbytes uint32) (k *Key, err error) {
+func NewKey(f *File, pos int64, nbytes uint32) (k *Key, err error) {
 	k = &Key{
 		file:     f,
 		seek_key: pos,

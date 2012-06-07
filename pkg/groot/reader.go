@@ -8,7 +8,7 @@ import (
 
 type unzip_fct func()
 
-type FileReader struct {
+type File struct {
 	name        string               // path to this file
 	f           *os.File             // handle to the raw file
 	order       binary.ByteOrder     // file endianness
@@ -30,8 +30,8 @@ type FileReader struct {
 	nbytes_info uint32 // number of bytes for streamerinfos?
 }
 
-func NewFileReader(name string) (f *FileReader, err error) {
-	f = &FileReader{
+func NewFileReader(name string) (f *File, err error) {
+	f = &File{
 		name:     name,
 		order:    binary.BigEndian,
 		unzipers: make(map[string]unzip_fct),
@@ -51,11 +51,11 @@ func NewFileReader(name string) (f *FileReader, err error) {
 	return f, err
 }
 
-func (f *FileReader) breader() breader {
+func (f *File) breader() breader {
 	return breader{f.order}
 }
 
-func (f *FileReader) seek(offset int64, pos int) (ret int64, err error) {
+func (f *File) seek(offset int64, pos int) (ret int64, err error) {
 	switch pos {
 	case os.SEEK_SET:
 		return f.f.Seek(offset, os.SEEK_SET)
@@ -71,7 +71,7 @@ func (f *FileReader) seek(offset int64, pos int) (ret int64, err error) {
 	panic("unreachable")
 }
 
-func (f *FileReader) initialize() (err error) {
+func (f *File) initialize() (err error) {
 	err = f.read_header()
 	if err != nil {
 		return err
@@ -139,7 +139,7 @@ func (f *FileReader) initialize() (err error) {
 	return nil
 }
 
-func (f *FileReader) read_header() (err error) {
+func (f *File) read_header() (err error) {
 	cur, err := f.f.Seek(0, os.SEEK_CUR)
 	if err != nil {
 		return err
@@ -197,7 +197,7 @@ func (f *FileReader) read_header() (err error) {
 	return f.read_streamer_infos()
 }
 
-func (f *FileReader) read_streamer_infos() (err error) {
+func (f *File) read_streamer_infos() (err error) {
 	buf := make([]byte, int(f.nbytes_info))
 	_, err = f.f.ReadAt(buf, f.seek_info)
 	if err != nil {
@@ -207,19 +207,19 @@ func (f *FileReader) read_streamer_infos() (err error) {
 	return err
 }
 
-func (f *FileReader) Name() string {
+func (f *File) Name() string {
 	return f.name
 }
 
-func (f *FileReader) Version() uint32 {
+func (f *File) Version() uint32 {
 	return f.version
 }
 
-func (f *FileReader) Dir() *Directory {
+func (f *File) Dir() *Directory {
 	return &f.root_dir
 }
 
-func (f *FileReader) ByteOrder() binary.ByteOrder {
+func (f *File) ByteOrder() binary.ByteOrder {
 	return f.order
 }
 

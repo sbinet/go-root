@@ -11,7 +11,7 @@ import (
 
 // Directory is a directory inside a ROOT file
 type Directory struct {
-	file        *FileReader
+	file        *File
 	keys        []Key
 	ctime       time.Time // time of directory's creation
 	mtime       time.Time // time of directory's last modification
@@ -22,7 +22,7 @@ type Directory struct {
 	seek_keys   int64     // location of keys record on file
 }
 
-func NewDirectory(f *FileReader, buf []byte) (d *Directory, err error) {
+func NewDirectory(f *File, buf []byte) (d *Directory, err error) {
 	d = &Directory{file:f}
 	err = d.from_buffer(bytes.NewBuffer(buf))
 	if err != nil {
@@ -95,7 +95,7 @@ func (d *Directory) ROOTEncode(buf []byte) error {
 	panic("groot.Directory.ROOTEncode: sorry, not implemented")
 }
 
-func (d *Directory) SetFile(f *FileReader) error {
+func (d *Directory) SetFile(f *File) error {
 	d.file = f
 	return nil
 }
