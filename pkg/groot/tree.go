@@ -1,12 +1,14 @@
 package groot
 
-import(
+import (
 	"reflect"
 )
 
 type Tree struct {
-	name string
-	title string
+	name     string
+	title    string
+	entries  uint64
+	branches []Branch
 }
 
 func (tree *Tree) Class() Class {
@@ -36,10 +38,9 @@ func (tree *Tree) ROOTEncode(b *Buffer) (err error) {
 	return
 }
 
-
 func init() {
 	f := func() reflect.Value {
-		o := &Tree{}
+		o := &Tree{branches: make([]Branch, 0)}
 		return reflect.ValueOf(o)
 	}
 	Factory.db["TTree"] = f
