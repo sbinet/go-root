@@ -1,9 +1,7 @@
 package groot
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"reflect"
 	"time"
@@ -24,7 +22,8 @@ type Directory struct {
 
 func NewDirectory(f *File, buf []byte) (d *Directory, err error) {
 	d = &Directory{file:f}
-	err = d.from_buffer(bytes.NewBuffer(buf))
+	b, err := NewBuffer(buf, f.order, 0)
+	err = d.from_buffer(b)
 	if err != nil {
 		return
 	}
@@ -54,21 +53,20 @@ func (d *Directory) record_size(version uint32) uint32 {
 	return nbytes
 }
 
-func (d *Directory) from_buffer(buf io.Reader) (err error) {
-	br := d.file.breader()
-	version := br.ntou2(buf)
-	d.ctime = datime2time(br.ntou4(buf))
-	d.mtime = datime2time(br.ntou4(buf))
-	d.nbytes_keys = br.ntou4(buf)
-	d.nbytes_name = br.ntou4(buf)
+func (d *Directory) from_buffer(b *Buffer) (err error) {
+	version := b.ntou2()
+	d.ctime = datime2time(b.ntou4())
+	d.mtime = datime2time(b.ntou4())
+	d.nbytes_keys = b.ntou4()
+	d.nbytes_name = b.ntou4()
 	if version > 1000 {
-		d.seek_dir = br.ntoi8(buf)
-		d.seek_parent = br.ntoi8(buf)
-		d.seek_keys = br.ntoi8(buf)
+		d.seek_dir = b.ntoi8()
+		d.seek_parent = b.ntoi8()
+		d.seek_keys = b.ntoi8()
 	} else {
-		d.seek_dir = int64(br.ntoi4(buf))
-		d.seek_parent = int64(br.ntoi4(buf))
-		d.seek_keys = int64(br.ntoi4(buf))
+		d.seek_dir = int64(b.ntoi4())
+		d.seek_parent = int64(b.ntoi4())
+		d.seek_keys = int64(b.ntoi4())
 	}
 	printf("dir-version: %v\n", version)
 	printf("dir-ctime: %v\n", d.ctime.String())
@@ -81,9 +79,30 @@ func (d *Directory) from_buffer(buf io.Reader) (err error) {
 	return err
 }
 
-func (d *Directory) ROOTDecode(buf []byte) (err error) {
-	iobuf := bytes.NewBuffer(buf)
-	err = d.from_buffer(iobuf)
+func (d *Directory) ROOTDecode(b *Buffer) (err error) {
+	version := b.ntou2()
+	d.ctime = datime2time(b.ntou4())
+	d.mtime = datime2time(b.ntou4())
+	d.nbytes_keys = b.ntou4()
+	d.nbytes_name = b.ntou4()
+	if version > 1000 {
+		d.seek_dir = b.ntoi8()
+		d.seek_parent = b.ntoi8()
+		d.seek_keys = b.ntoi8()
+	} else {
+		d.seek_dir = int64(b.ntoi4())
+		d.seek_parent = int64(b.ntoi4())
+		d.seek_keys = int64(b.ntoi4())
+	}
+	printf("dir-version: %v\n", version)
+	printf("dir-ctime: %v\n", d.ctime.String())
+	printf("dir-mtime: %v\n", d.mtime.String())
+	printf("dir-nbytes-keys: %v\n", d.nbytes_keys)
+	printf("dir-nbytes-name: %v\n", d.nbytes_name)
+	printf("dir-seek-dir: %v\n", d.seek_dir)
+	printf("dir-seek-parent: %v\n", d.seek_parent)
+	printf("dir-seek-keys: %v\n", d.seek_keys)
+
 	if err != nil {
 		return err
 	}
@@ -91,7 +110,7 @@ func (d *Directory) ROOTDecode(buf []byte) (err error) {
 	return err
 }
 
-func (d *Directory) ROOTEncode(buf []byte) error {
+func (d *Directory) ROOTEncode(buffer *Buffer) error {
 	panic("groot.Directory.ROOTEncode: sorry, not implemented")
 }
 
@@ -135,18 +154,17 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 		return -1, err
 	}
 
-	f := bytes.NewReader(buf)
-	if f == nil {
-		return -1, fmt.Errorf("groot: could not create a bytes.Reader")
-	}
-
-	err = hdr.init_from_buffer(f)
+	b,err := NewBuffer(buf, d.file.order, 0)
 	if err != nil {
 		return -1, err
 	}
 
-	br := d.file.breader()
-	nkeys = int(br.ntoi4(f))
+	err = hdr.init_from_buffer(b)
+	if err != nil {
+		return -1, err
+	}
+
+	nkeys = int(b.ntoi4())
 	printf("dir-nkeys: %v\n", nkeys)
 
 	d.keys = make([]Key, nkeys)
@@ -156,7 +174,7 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 		if err != nil {
 			return -1, err
 		}
-		err = key.init_from_buffer(f)
+		err = key.init_from_buffer(b)
 		if err != nil {
 			return -1, err
 		}

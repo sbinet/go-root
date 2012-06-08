@@ -1,7 +1,6 @@
 package groot
 
 import (
-	"io"
 	"time"
 )
 
@@ -64,47 +63,45 @@ func NewKey(f *File, pos int64, nbytes uint32) (k *Key, err error) {
 	return k, err
 }
 
-func (k *Key) init_from_buffer(f io.Reader) (err error) {
-
-	br := k.file.breader()
+func (k *Key) init_from_buffer(b *Buffer) (err error) {
 
 	// read the key structure from the buffer
-	k.nbytes = br.ntou4(f)
+	k.nbytes = b.ntou4()
 	printf("key-nbytes: %v\n", k.nbytes)
 
 	printf("key-version: %v\n", k.version)
 
-	k.version = uint32(br.ntou2(f))
+	k.version = uint32(b.ntou2())
 	printf("key-version: %v\n", k.version)
-	k.objsz = uint32(br.ntoi4(f))
+	k.objsz = uint32(b.ntoi4())
 	printf("key-objsz: %v\n", k.objsz)
 
-	k.date = datime2time(br.ntou4(f))
+	k.date = datime2time(b.ntou4())
 	printf("key-cdate: %v\n", k.date.String())
 
-	k.keysz = br.ntou2(f)
+	k.keysz = b.ntou2()
 	printf("key-keysz: %v\n", k.keysz)
 
-	k.cycle = br.ntou2(f)
+	k.cycle = b.ntou2()
 	printf("key-cycle: %v\n", k.cycle)
 
 	if k.version > 1000 {
-		k.seek_key = br.ntoi8(f)
-		k.seek_parent_dir = br.ntoi8(f)
+		k.seek_key = b.ntoi8()
+		k.seek_parent_dir = b.ntoi8()
 	} else {
-		k.seek_key = int64(br.ntoi4(f))
-		k.seek_parent_dir = int64(br.ntoi4(f))
+		k.seek_key = int64(b.ntoi4())
+		k.seek_parent_dir = int64(b.ntoi4())
 	}
 	printf("key-seek-key: %v\n", k.seek_key)
 	printf("key-seek-pdir: %v\n", k.seek_parent_dir)
 
-	k.class = br.readTString(f)
+	k.class = b.readTString()
 	printf("key-class [%v]\n", k.class)
 
-	k.name = br.readTString(f)
+	k.name = b.readTString()
 	printf("key-name  [%v]\n", k.name)
 
-	k.title = br.readTString(f)
+	k.title = b.readTString()
 	printf("key-title [%v]\n", k.title)
 
 	return err
@@ -165,6 +162,7 @@ func (k *Key) Buffer() (buf []byte, err error) {
 func (k *Key) Value() (v interface{}) {
 	factory := Factory.Get(k.Class())
 	if factory == nil {
+		printf("**err** no factory for class [%s]\n", k.Class())
 		return v
 	}
 
@@ -176,7 +174,7 @@ func (k *Key) Value() (v interface{}) {
 		}
 	}
 	if vv,ok := vv.Interface().(ROOTStreamer); ok {
-		buf, err := k.Buffer()
+		buf, err := NewBufferFromKey(k)
 		if err != nil {
 			return v
 		}
@@ -184,6 +182,8 @@ func (k *Key) Value() (v interface{}) {
 		if err != nil {
 			return v
 		}
+	} else {
+		dprintf("**err** class [%s] does not satisfy the ROOTStreamer interface\n", k.Class())
 	}
 	v = vv.Interface()
 	return v

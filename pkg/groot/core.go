@@ -11,6 +11,10 @@ func printf(format string, args ...interface{}) {
 	}
 }
 
+func dprintf(format string, args ...interface{}) {
+	fmt.Printf(format, args...)
+}
+
 const (
 	sz_int16  = 2
 	sz_int32  = 4
@@ -21,6 +25,5 @@ const (
 
 	g_START_BIG_FILE = 2000000000
 )
-
 
 // EOF

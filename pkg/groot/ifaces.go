@@ -25,7 +25,7 @@ type Member interface {
 	// GetComment returns the comment associated with this member
 	Comment() string
 
-	// GetName returns the name of this member
+	// Name returns the name of this member
 	Name() string
 
 	// Type returns the class of this member
@@ -39,6 +39,12 @@ type Member interface {
 type Object interface {
 	// Class returns the ROOT class of this object
 	Class() Class
+
+	// Name returns the name of this ROOT object
+	Name() string
+
+	// Title returns the title of this ROOT object
+	Title() string
 }
 
 // ClassFactory creates ROOT classes
@@ -50,9 +56,9 @@ type ClassFactory interface {
 // routine for encoding and decoding transmitted values sent to a ROOT file.
 type ROOTStreamer interface {
 	// de-serialize into the current value using 'buf' as input
-	ROOTDecode(buf []byte) error
+	ROOTDecode(buf *Buffer) error
 	// serialize the current value using 'buf' as output
-	ROOTEncode(buf []byte) error
+	ROOTEncode(buf *Buffer) error
 }
 
 // FileSetter is the interface allowing to reset the ownership of a ROOT object

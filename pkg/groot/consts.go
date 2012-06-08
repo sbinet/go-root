@@ -60,6 +60,9 @@ const (
 	kClassMask = 0x80000000
 	kMapOffset = 2
 	kByteCountVMask = 0x4000
+
+	kIsReferenced = 1 << 4
+	kIsOnHeap = 0x01000000
 )
 
 
