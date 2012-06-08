@@ -509,6 +509,32 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
   }
 */
 
+func (b *Buffer) read_attline() (color, style, width uint16) {
+	/*vers, pos, bcnt := */ b.read_version()
+	color = b.ntou2()
+	style = b.ntou2()
+	width = b.ntou2()
+	//FIXME: check_byte_count(s,c,"TAttLine")
+	return
+}
+
+func (b *Buffer) read_attfill() (color, style uint16) {
+	/*vers, pos, bcnt := */ b.read_version()
+	color = b.ntou2()
+	style = b.ntou2()
+	//FIXME: check_byte_count(s,c,"TAttFill")
+	return
+}
+
+func (b *Buffer) read_attmarker() (color, style uint16, width float32) {
+	/*vers, pos, bcnt := */ b.read_version()
+	color = b.ntou2()
+	style = b.ntou2()
+	width = b.ntof()
+	//FIXME: check_byte_count(s,c,"TAttMarker")
+	return
+}
+
 //FIXME
 // readObjectAny
 // readTList
