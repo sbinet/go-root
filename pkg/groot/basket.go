@@ -7,11 +7,11 @@ import (
 type Basket struct {
 	Key
 
-	nev_bufsz    uint32 // Length in Int_t of m_entry_offset
-	nev          uint32 //Number of entries in basket
-	last         uint32 //Pointer to last used byte in basket
-	entry_offset *int   //[m_nev] Offset of entries in fBuffer(TKey)
-	displacement *int   //![m_nev] Displacement of entries in fBuffer(TKey)
+	nev_bufsz    uint32 // Length in Int_t of entry_offset
+	nev          uint32 // Number of entries in basket
+	last         uint32 // Pointer to last used byte in basket
+	entry_offset int    // [m_nev] Offset of entries in Key.buffer
+	displacement int    //![m_nev] Displacement of entries in Key.buffer
 
 }
 
