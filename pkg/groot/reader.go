@@ -116,16 +116,16 @@ func (f *File) initialize() (err error) {
 	printf("buf: %v\n", buf[:])
 	printf("rst: %v\n", buf[nk:])
 	printf("TFile: %v\n", []byte{'T', 'F', 'i', 'l', 'e'})
-	cname := b.readTString()
+	cname := b.read_tstring()
 	if cname != "TFile" {
 		return fmt.Errorf("groot: expected [TFile]. got [%v]", cname)
 	}
 	printf("f-clsname [%v]\n", cname)
 
-	cname = b.readTString()
+	cname = b.read_tstring()
 	printf("f-cname   [%v]\n", cname)
 
-	f.title = b.readTString()
+	f.title = b.read_tstring()
 	printf("f-title   [%v]\n", f.title)
 
 	if f.root_dir.nbytes_name < 10 || f.root_dir.nbytes_name > 1000 {
@@ -195,9 +195,9 @@ func (f *File) read_header() (err error) {
 
 func (f *File) read_streamer_infos() (err error) {
 
-	if true {
-		return
-	}
+	//FIXME:
+	return
+
 	lst := make(List, 0)
 	dprintf("lst: %v\n", lst)
 

@@ -8,16 +8,14 @@ type List []Object
 
 func (lst *List) ROOTDecode(b *Buffer) (err error) {
 
-	vers, pos, bcnt := b.readVersion()
-	/*id, bits := br.readObject(buf)*/
-	/*v,pos,bcnt := */ //br.readVersion(buf)
+	vers, pos, bcnt := b.read_version()
 	id := b.ntou4()
 	bits := b.ntou4()
 	bits |= kIsOnHeap // by definition de-serialized object is on heap
 	if (bits & kIsReferenced) == 0  {
 		_ = b.read_nbytes(2)
 	}
-	name := b.readTString()
+	name := b.read_tstring()
 
 	nobjs := int(b.ntoi4())
 
@@ -27,7 +25,7 @@ func (lst *List) ROOTDecode(b *Buffer) (err error) {
 
 	for i := 0; i < nobjs; i++ {
 		dprintf("---> %v/%v\n", i+1, nobjs)
-		obj := b.readObject()
+		obj := b.read_object()
 		if obj != nil {
 			
 		}

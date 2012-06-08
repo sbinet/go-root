@@ -95,13 +95,13 @@ func (k *Key) init_from_buffer(b *Buffer) (err error) {
 	printf("key-seek-key: %v\n", k.seek_key)
 	printf("key-seek-pdir: %v\n", k.seek_parent_dir)
 
-	k.class = b.readTString()
+	k.class = b.read_tstring()
 	printf("key-class [%v]\n", k.class)
 
-	k.name = b.readTString()
+	k.name = b.read_tstring()
 	printf("key-name  [%v]\n", k.name)
 
-	k.title = b.readTString()
+	k.title = b.read_tstring()
 	printf("key-title [%v]\n", k.title)
 
 	return err
@@ -162,7 +162,7 @@ func (k *Key) Buffer() (buf []byte, err error) {
 func (k *Key) Value() (v interface{}) {
 	factory := Factory.Get(k.Class())
 	if factory == nil {
-		dprintf("**err** no factory for class [%s]\n", k.Class())
+		printf("**err** no factory for class [%s]\n", k.Class())
 		return v
 	}
 
