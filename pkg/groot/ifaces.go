@@ -14,7 +14,6 @@ type Class interface {
 
 	// Name returns the ROOT class name for this ROOT class
 	Name() string
-
 }
 
 // Member represents a single member of a ROOT class

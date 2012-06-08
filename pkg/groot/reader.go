@@ -225,7 +225,7 @@ func (f *File) read_streamer_infos() (err error) {
 		}
 	}
 	dprintf("buf: %v\n", len(buf))
-	
+
 	return err
 }
 

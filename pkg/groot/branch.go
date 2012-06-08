@@ -5,8 +5,10 @@ import (
 )
 
 type Branch struct {
-	name string
+	name  string
 	title string
+
+	file *File
 }
 
 func (branch *Branch) Class() Class {
@@ -35,7 +37,6 @@ func (branch *Branch) ROOTEncode(b *Buffer) (err error) {
 	panic("not implemented")
 	return
 }
-
 
 func init() {
 	f := func() reflect.Value {

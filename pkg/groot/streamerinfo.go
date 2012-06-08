@@ -5,11 +5,11 @@ import (
 )
 
 type StreamerInfo struct {
-	name  string
-	title string
-	checksum uint32
+	name      string
+	title     string
+	checksum  uint32
 	classvers uint32
-	elmts []Object
+	elmts     []Object
 }
 
 func (si *StreamerInfo) Class() Class {

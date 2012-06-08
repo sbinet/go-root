@@ -12,7 +12,7 @@ func (lst *List) ROOTDecode(b *Buffer) (err error) {
 	id := b.ntou4()
 	bits := b.ntou4()
 	bits |= kIsOnHeap // by definition de-serialized object is on heap
-	if (bits & kIsReferenced) == 0  {
+	if (bits & kIsReferenced) == 0 {
 		_ = b.read_nbytes(2)
 	}
 	name := b.read_tstring()
@@ -27,7 +27,7 @@ func (lst *List) ROOTDecode(b *Buffer) (err error) {
 		dprintf("---> %v/%v\n", i+1, nobjs)
 		obj := b.read_object()
 		if obj != nil {
-			
+
 		}
 	}
 	return err

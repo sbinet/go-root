@@ -5,6 +5,7 @@ import (
 )
 
 var g_verbose = false
+
 func printf(format string, args ...interface{}) {
 	if g_verbose {
 		fmt.Printf(format, args...)

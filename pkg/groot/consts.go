@@ -56,14 +56,16 @@ const (
 const (
 	kNullTag = 0
 	// on tag :
-	kNewClassTag = 0xFFFFFFFF
-	kClassMask = 0x80000000
-	kMapOffset = 2
+	kNewClassTag    = 0xFFFFFFFF
+	kClassMask      = 0x80000000
+	kMapOffset      = 2
 	kByteCountVMask = 0x4000
 
 	kIsReferenced = 1 << 4
-	kIsOnHeap = 0x01000000
-)
+	kIsOnHeap     = 0x01000000
 
+	//baskets
+	kDisplacementMask = 0xFF000000
+)
 
 // EOF

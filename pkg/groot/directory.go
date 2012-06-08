@@ -21,7 +21,7 @@ type Directory struct {
 }
 
 func NewDirectory(f *File, buf []byte) (d *Directory, err error) {
-	d = &Directory{file:f}
+	d = &Directory{file: f}
 	b, err := NewBuffer(buf, f.order, 0)
 	err = d.from_buffer(b)
 	if err != nil {
@@ -129,7 +129,7 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 	printf("--read_keys-- %v %v\n", d.seek_keys, d.nbytes_keys)
 	hdr, err := NewKey(d.file, d.seek_keys, d.nbytes_keys)
 	if err != nil {
-		printf("groot.Directory.read_keys: %v\n",err.Error())
+		printf("groot.Directory.read_keys: %v\n", err.Error())
 		return -1, err
 	}
 	if hdr == nil {
@@ -138,7 +138,7 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 
 	cur, err := d.file.f.Seek(0, os.SEEK_CUR)
 	if err != nil {
-		printf("groot.Directory.read_keys: %v\n",err.Error())
+		printf("groot.Directory.read_keys: %v\n", err.Error())
 		return -1, err
 	}
 	defer d.file.f.Seek(cur, os.SEEK_SET)
@@ -148,13 +148,13 @@ func (d *Directory) read_keys() (nkeys int, err error) {
 	printf("--- %v %v\n", len(buf), d.seek_keys)
 	_, err = d.file.f.ReadAt(buf, d.seek_keys)
 	if err != nil {
-		printf("seek_keys: %v\n",d.seek_keys)
-		printf("len(buf): %v\n",len(buf))
-		printf("groot.Directory.read_keys-ReadAt: %v\n",err.Error())
+		printf("seek_keys: %v\n", d.seek_keys)
+		printf("len(buf): %v\n", len(buf))
+		printf("groot.Directory.read_keys-ReadAt: %v\n", err.Error())
 		return -1, err
 	}
 
-	b,err := NewBuffer(buf, d.file.order, 0)
+	b, err := NewBuffer(buf, d.file.order, 0)
 	if err != nil {
 		return -1, err
 	}
@@ -193,6 +193,5 @@ func init() {
 	Factory.db["TDirectory"] = new_dir
 	Factory.db["*groot.Directory"] = new_dir
 }
-
 
 // EOF

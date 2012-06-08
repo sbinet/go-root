@@ -33,7 +33,7 @@ import (
 type Key struct {
 	file *File
 	//bufsz  uint32
-	//buffer []byte
+	buffer []byte
 
 	// record -- stored in file
 
@@ -53,6 +53,7 @@ type Key struct {
 func NewKey(f *File, pos int64, nbytes uint32) (k *Key, err error) {
 	k = &Key{
 		file:     f,
+		buffer:   make([]byte, int(nbytes)),
 		seek_key: pos,
 		nbytes:   nbytes,
 		version:  2,
@@ -64,6 +65,12 @@ func NewKey(f *File, pos int64, nbytes uint32) (k *Key, err error) {
 }
 
 func (k *Key) init_from_buffer(b *Buffer) (err error) {
+
+	{
+		buf := b.Bytes()
+		k.buffer = make([]byte, len(buf))
+		copy(k.buffer, buf)
+	}
 
 	// read the key structure from the buffer
 	k.nbytes = b.ntou4()
@@ -122,10 +129,10 @@ func (k *Key) Buffer() (buf []byte, err error) {
 	}
 
 	printf("--Key.Buffer--\n")
-	printf("nbytes: %v\n",k.nbytes)
-	printf("keysz: %v\n",k.keysz)
-	printf("objsz: %v\n",k.objsz)
-	printf("seek-key: %v\n",k.seek_key)
+	printf("nbytes: %v\n", k.nbytes)
+	printf("keysz: %v\n", k.keysz)
+	printf("objsz: %v\n", k.objsz)
+	printf("seek-key: %v\n", k.seek_key)
 	printf("compressed: %v\n", (k.objsz > (k.nbytes - uint32(k.keysz))))
 
 	if k.objsz <= (k.nbytes - uint32(k.keysz)) {
@@ -134,11 +141,16 @@ func (k *Key) Buffer() (buf []byte, err error) {
 			bufsz = int(k.nbytes)
 		}
 		buf = make([]byte, bufsz)
-		printf("*** %v %v\n",len(buf), k.seek_key)
+		printf("*** %v %v\n", len(buf), k.seek_key)
 		_, err = k.file.f.ReadAt(buf, k.seek_key)
 		if err != nil {
 			return []byte{}, err
 		}
+
+		//
+		k.buffer = make([]byte, len(buf))
+		copy(k.buffer, buf)
+
 		// extract the pure object-buffer
 		buf = buf[k.keysz:]
 	} else {
@@ -155,6 +167,10 @@ func (k *Key) Buffer() (buf []byte, err error) {
 		if err != nil {
 			return []byte{}, err
 		}
+		//
+		k.buffer = make([]byte, 0, len(buf)+int(k.keysz))
+		k.buffer = append(k.buffer, compbuf[:k.keysz]...)
+		k.buffer = append(k.buffer, buf...)
 	}
 	return
 }
@@ -167,13 +183,13 @@ func (k *Key) Value() (v interface{}) {
 	}
 
 	vv := factory()
-	if vv,ok := vv.Interface().(FileSetter); ok {
+	if vv, ok := vv.Interface().(FileSetter); ok {
 		err := vv.SetFile(k.file)
 		if err != nil {
 			return v
 		}
 	}
-	if vv,ok := vv.Interface().(ROOTStreamer); ok {
+	if vv, ok := vv.Interface().(ROOTStreamer); ok {
 		buf, err := NewBufferFromKey(k)
 		if err != nil {
 			return v
