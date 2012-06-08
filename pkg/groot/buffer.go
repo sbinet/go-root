@@ -438,19 +438,18 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 		// skip version
 		b.read_nbytes(2)
 		// skip object bits and unique id
-		b.read_nbytes(8)
+		id := b.ntou4()
+		bits := b.ntou4()
+		//b.read_nbytes(8)
+		dprintf("id=%v bits=%v\n", id, bits)
 	}
-	name := "??"
-	if vers > 1 {
-		name = b.read_tstring()
-	}
-	title := b.read_tstring()
+	name :=  b.read_tstring()
 
 	nobjs := int(b.ntoi4())
 	lbound := b.ntoi4()
 
-	printf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' title='%v' nobjs=%v lbound=%v\n",
-		vers, pos, bcnt, name, title, nobjs, lbound)
+	dprintf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' nobjs=%v lbound=%v\n",
+		vers, pos, bcnt, name, nobjs, lbound)
 
 	elmts = make([]Object, nobjs)
 	for i := 0; i < nobjs; i++ {

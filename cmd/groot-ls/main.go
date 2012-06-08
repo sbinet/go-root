@@ -34,7 +34,7 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 		if i+1 >= nkeys {
 			str = "`--"
 		}
-		fmt.Printf("%s%s '%s' title='%s' type=%s\n",
+		fmt.Printf("%s%s %s title='%s' type=%s\n",
 			indent, str, k.Name(), k.Title(), k.Class())
 		if v, ok := k.Value().(*groot.Directory); ok {
 			path := append(path, k.Name())

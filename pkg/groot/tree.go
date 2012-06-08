@@ -120,8 +120,11 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		b.ntoi8() //fEstimate
 	}
 
-	printf("=> entries=%v tot_bytes=%v zip_bytes=%v\n", 
-		tree.entries, tree.tot_bytes, tree.zip_bytes)
+	dprintf("=> (%s) entries=%v tot_bytes=%v zip_bytes=%v\n", 
+		tree.name, tree.entries, tree.tot_bytes, tree.zip_bytes)
+
+	branches := b.read_obj_array()
+	dprintf("-- #nbranches: %v\n", len(branches))
 	return
 }
 
