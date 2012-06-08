@@ -162,7 +162,7 @@ func (k *Key) Buffer() (buf []byte, err error) {
 func (k *Key) Value() (v interface{}) {
 	factory := Factory.Get(k.Class())
 	if factory == nil {
-		printf("**err** no factory for class [%s]\n", k.Class())
+		dprintf("**err** no factory for class [%s]\n", k.Class())
 		return v
 	}
 
