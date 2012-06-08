@@ -54,9 +54,9 @@ func (tree *Tree) Entries() uint64 {
 func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 
 	vers, pos, bcnt := b.read_version()
-	dprintf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	tree.name, tree.title = b.read_tnamed()
-	dprintf("name='%v' title='%v'\n", tree.name, tree.title)
+	printf("name='%v' title='%v'\n", tree.name, tree.title)
 	b.read_attline()
 	b.read_attfill()
 	b.read_attmarker()
@@ -120,7 +120,7 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		b.ntoi8() //fEstimate
 	}
 
-	dprintf("=> entries=%v tot_bytes=%v zip_bytes=%v\n", 
+	printf("=> entries=%v tot_bytes=%v zip_bytes=%v\n", 
 		tree.entries, tree.tot_bytes, tree.zip_bytes)
 	return
 }
