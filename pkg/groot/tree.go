@@ -59,6 +59,7 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 	dprintf("name='%v' title='%v'\n", tree.name, tree.title)
 	b.read_attline()
 	b.read_attfill()
+	b.read_attmarker()
 
 	if vers <= 4 {
 		b.ntoi4() //fScanField
