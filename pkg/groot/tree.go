@@ -1,6 +1,7 @@
 package groot
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -10,6 +11,26 @@ type Tree struct {
 	title    string
 	entries  uint64
 	branches []Branch
+}
+
+func NewTree(file *File, name, title string) (tree *Tree, err error) {
+	tree = &Tree{
+	file: file,
+	name: name,
+	title: title,
+	entries: 0,
+	branches: make([]Branch, 0),
+	}
+	return
+}
+
+func (tree *Tree) SetFile(f *File) (err error) {
+	if tree.file != nil {
+		err = fmt.Errorf("groot: cannot migrate a Tree to another file")
+		return
+	}
+	tree.file = f
+	return
 }
 
 func (tree *Tree) Class() Class {
@@ -51,5 +72,6 @@ func init() {
 // check interfaces
 var _ Object = (*Tree)(nil)
 var _ ROOTStreamer = (*Tree)(nil)
+var _ FileSetter = (*Tree)(nil)
 
 // EOF

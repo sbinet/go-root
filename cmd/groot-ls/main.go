@@ -27,13 +27,18 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 		return
 	}
 	keys := dir.Keys()
-	fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
-	for _, k := range keys {
-		fmt.Printf("%sname='%s' title='%s' type=%s\n",
-			indent, k.Name(), k.Title(), k.Class())
+	nkeys := len(keys)
+	str := "|--"
+	//fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
+	for i, k := range keys {
+		if i+1 >= nkeys {
+			str = "`--"
+		}
+		fmt.Printf("%s%s '%s' title='%s' type=%s\n",
+			indent, str, k.Name(), k.Title(), k.Class())
 		if v, ok := k.Value().(*groot.Directory); ok {
 			path := append(path, k.Name())
-			inspect(v, path, indent+"  ")
+			inspect(v, path, indent+"    ")
 		}
 	}
 }
