@@ -29,7 +29,7 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 	keys := dir.Keys()
 	fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
 	for _, k := range keys {
-		fmt.Printf("%skey: name='%s' title='%s' type=%s\n",
+		fmt.Printf("%sname='%s' title='%s' type=%s\n",
 			indent, k.Name(), k.Title(), k.Class())
 		if v, ok := k.Value().(*groot.Directory); ok {
 			path := append(path, k.Name())

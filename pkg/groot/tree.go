@@ -5,6 +5,7 @@ import (
 )
 
 type Tree struct {
+	file     *File
 	name     string
 	title    string
 	entries  uint64
@@ -26,9 +27,9 @@ func (tree *Tree) Title() string {
 func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 
 	vers, pos, bcnt := b.read_version()
-	dprintf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	tree.name, tree.title = b.read_tnamed()
-	dprintf("name='%v' title='%v'\n", tree.name, tree.title)
+	printf("name='%v' title='%v'\n", tree.name, tree.title)
 
 	return
 }

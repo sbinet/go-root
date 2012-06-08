@@ -321,7 +321,7 @@ func (b *Buffer) read_version() (vers uint16, pos, bcnt uint32) {
 
 func (b *Buffer) read_object() (o Object) {
 	clsname, bcnt, isref := b.read_class()
-	dprintf(">>[%s] [%v] [%v]\n", clsname, bcnt, isref)
+	printf(">>[%s] [%v] [%v]\n", clsname, bcnt, isref)
 	if isref {
 		obj_offset := bcnt - kMapOffset - b.klen
 		bb := b.clone()
@@ -386,7 +386,7 @@ func (b *Buffer) read_class() (name string, bcnt uint32, isref bool) {
 		bcnt = uint32(i)
 		isref = true
 	}
-	dprintf("--[%s] [%v] [%v]\n", name, bcnt, isref)
+	printf("--[%s] [%v] [%v]\n", name, bcnt, isref)
 	return
 }
 
@@ -395,10 +395,10 @@ func (b *Buffer) read_class_tag() (clstag string) {
 
 	if tag == kNewClassTag {
 		clstag = b.read_string(80)
-		dprintf("--class+tag: [%v]\n", clstag)
+		printf("--class+tag: [%v]\n", clstag)
 	} else if (tag & kClassMask) != 0 {
 		clstag = b.clone().read_class_tag()
-		dprintf("--class-tag: [%v]\n", clstag)
+		printf("--class-tag: [%v]\n", clstag)
 	} else {
 		panic(fmt.Errorf("groot.read_class_tag: unknown class-tag [%v]", tag))
 	}
@@ -416,7 +416,7 @@ func (b *Buffer) read_tnamed() (name, title string) {
 	}
 	name = b.read_tstring()
 	title = b.read_tstring()
-	dprintf("read_tnamed: vers=%v pos=%v bcnt=%v id=%v bits=%v name='%v' title='%v'\n",
+	printf("read_tnamed: vers=%v pos=%v bcnt=%v id=%v bits=%v name='%v' title='%v'\n",
 		vers, pos, bcnt, id, bits, name, title)
 	//FIXME: buffer.check_byte_count(pos,bcnt,"TNamed")
 
@@ -425,7 +425,7 @@ func (b *Buffer) read_tnamed() (name, title string) {
 
 func (b *Buffer) read_elements() (elmts []Object) {
 	name, bcnt, isref := b.read_class()
-	dprintf("read_elements: name='%v' bcnt=%v isref=%v\n",
+	printf("read_elements: name='%v' bcnt=%v isref=%v\n",
 		name, bcnt, isref)
 	elmts = b.read_obj_array()
 	return elmts
@@ -449,7 +449,7 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 	nobjs := int(b.ntoi4())
 	lbound := b.ntoi4()
 
-	dprintf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' title='%v' nobjs=%v lbound=%v\n",
+	printf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' title='%v' nobjs=%v lbound=%v\n",
 		vers, pos, bcnt, name, title, nobjs, lbound)
 
 	elmts = make([]Object, nobjs)
