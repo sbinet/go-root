@@ -31,6 +31,10 @@ func NewBufferFromKey(k *Key) (b *Buffer, err error) {
 	return NewBuffer(buf, k.file.order, uint32(k.keysz))
 }
 
+func (b *Buffer) Len() int {
+	return len(b.Bytes())
+}
+
 func (b *Buffer) Bytes() []byte {
 	return b.buf.Bytes()
 }
@@ -320,8 +324,11 @@ func (b *Buffer) read_version() (vers uint16, pos, bcnt uint32) {
 }
 
 func (b *Buffer) read_object() (o Object) {
+	// before reading object, save start position
+	startbuf := b.clone()
+
 	clsname, bcnt, isref := b.read_class()
-	printf(">>[%s] [%v] [%v]\n", clsname, bcnt, isref)
+	dprintf(">>[%s] [%v] [%v]\n", clsname, bcnt, isref)
 	if isref {
 		obj_offset := bcnt - kMapOffset - b.klen
 		bb := b.clone()
@@ -332,6 +339,15 @@ func (b *Buffer) read_object() (o Object) {
 			if scls == "" {
 				panic("groot.Buffer.read_object: read_class_tag did not find a class name")
 			}
+			factory := Factory.Get(scls)
+			if factory == nil {
+				dprintf("**err** no factory for class [%s]\n", clsname)
+				return
+			}
+
+			vv := factory()
+			o = vv.Interface().(Object)
+			panic("chasing refs isnt implemented")
 		} else {
 			/* boo */
 		}
@@ -341,9 +357,14 @@ func (b *Buffer) read_object() (o Object) {
 		 // but enforce it anyway : 
 		 m_pos = m_buffer+startpos+sizeof(unsigned int); 
 		*/
+		b = startbuf //FIXME ??
+		b.read_nbytes(4)
 	} else {
 		if clsname == "" {
 			o = nil
+			// m_pos = m_buffer+startpos+bcnt+sizeof(unsigned int);
+			b = startbuf
+			b.read_nbytes(int(bcnt+4))
 		} else {
 
 			factory := Factory.Get(clsname)
@@ -355,9 +376,11 @@ func (b *Buffer) read_object() (o Object) {
 			vv := factory()
 			o = vv.Interface().(Object)
 			if vv, ok := vv.Interface().(ROOTStreamer); ok {
-				err := vv.ROOTDecode(b.clone())
+				err := vv.ROOTDecode(b)
 				if err != nil {
 					panic(err)
+				} else {
+					dprintf("--decoded[%s]--\n", o.Name())
 				}
 			} else {
 				dprintf("**err** class [%s] does not satisfy the ROOTStreamer interface\n", clsname)
@@ -371,14 +394,14 @@ func (b *Buffer) read_class() (name string, bcnt uint32, isref bool) {
 
 	//var bufvers = 0
 	i := b.ntou4()
-
+	dprintf("..first_int: %x\n", i)
 	if i == kNullTag {
 		/*empty*/
 	} else if (i & kByteCountMask) != 0 {
 		//bufvers = 1
 		clstag := b.read_class_tag()
 		if clstag == "" {
-			panic("groot.breader.readClass: empty class tag")
+			panic("groot.Buffer.read_class: empty class tag")
 		}
 		name = clstag
 		bcnt = uint32(int64(i) & ^kByteCountMask)
@@ -386,13 +409,13 @@ func (b *Buffer) read_class() (name string, bcnt uint32, isref bool) {
 		bcnt = uint32(i)
 		isref = true
 	}
-	printf("--[%s] [%v] [%v]\n", name, bcnt, isref)
+	dprintf("--[%s] [%v] [%v]\n", name, bcnt, isref)
 	return
 }
 
 func (b *Buffer) read_class_tag() (clstag string) {
 	tag := b.ntou4()
-
+	dprintf("--tag:%v %x\n", tag, tag)
 	if tag == kNewClassTag {
 		clstag = b.read_string(80)
 		printf("--class+tag: [%v]\n", clstag)
@@ -438,10 +461,7 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 		// skip version
 		b.read_nbytes(2)
 		// skip object bits and unique id
-		id := b.ntou4()
-		bits := b.ntou4()
-		//b.read_nbytes(8)
-		dprintf("id=%v bits=%v\n", id, bits)
+		b.read_nbytes(8)
 	}
 	name :=  b.read_tstring()
 
@@ -453,7 +473,9 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 
 	elmts = make([]Object, nobjs)
 	for i := 0; i < nobjs; i++ {
+		dprintf("--[%d]...\n", i)
 		obj := b.read_object()
+		dprintf("--[%d]... [done]\n", i)
 		elmts[i] = obj
 	}
 	//FIXME: buffer.check_byte_count(s,c,"TObjArray")
