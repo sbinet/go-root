@@ -4,16 +4,16 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
+	//"log"
 	"os"
-	"runtime/pprof"
+	//"runtime/pprof"
 	"strings"
 
 	"bitbucket.org/binet/go-root/pkg/groot"
 )
 
 var fname = flag.String("f", "ntuple.root", "ROOT file to inspect")
-var cpuprofile = flag.String("cpuprofile", "cpu.prof", "write cpu profile to file")
+//var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func normpath(path []string) string {
 	name := strings.Join(path, "/")
@@ -61,14 +61,14 @@ func main() {
 	fmt.Printf(":: groot-ls ::\n")
 	flag.Parse()
 
-	if *cpuprofile != "" {
-        f, err := os.Create(*cpuprofile)
-        if err != nil {
-            log.Fatal(err)
-        }
-        pprof.StartCPUProfile(f)
-        defer pprof.StopCPUProfile()
-    }
+	// if *cpuprofile != "" {
+    //     f, err := os.Create(*cpuprofile)
+    //     if err != nil {
+    //         log.Fatal(err)
+    //     }
+    //     pprof.StartCPUProfile(f)
+    //     defer pprof.StopCPUProfile()
+    // }
 
 	f, err := groot.NewFileReader(*fname)
 	if err != nil {
