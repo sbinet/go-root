@@ -54,9 +54,9 @@ func (tree *Tree) Entries() uint64 {
 func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 
 	vers, pos, bcnt := b.read_version()
-	printf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	dprintf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	tree.name, tree.title = b.read_tnamed()
-	printf("name='%v' title='%v'\n", tree.name, tree.title)
+	dprintf("name='%v' title='%v'\n", tree.name, tree.title)
 	b.read_attline()
 	b.read_attfill()
 	b.read_attmarker()
@@ -125,6 +125,10 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 
 	branches := b.read_obj_array()
 	dprintf("-- #nbranches: %v\n", len(branches))
+
+	leaves := b.read_obj_array()
+	dprintf("-- #nleaves: %v\n", len(leaves))
+
 	return
 }
 

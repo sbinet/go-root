@@ -59,7 +59,7 @@ func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 	if basket.key.objsz != 0 {
 		basket.key.objsz = uint32(basket.key.nbytes) - uint32(basket.key.keysz)
 	}
-	if flag != 0 {
+	if flag == 0 {
 		// fHeaderOnly
 		return
 	}

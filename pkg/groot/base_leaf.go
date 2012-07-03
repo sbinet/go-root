@@ -1,5 +1,9 @@
 package groot
 
+type ibaseLeaf interface {
+	toBaseLeaf() *baseLeaf
+}
+
 type baseLeaf struct {
 	name   string
 	title  string
@@ -22,6 +26,7 @@ func (base *baseLeaf) Title() string {
 }
 
 func (base *baseLeaf) ROOTDecode(b *Buffer) (err error) {
+	spos := b.Pos()
 
 	vers, pos, bcnt := b.read_version()
 	dprintf("baseleaf-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
@@ -37,9 +42,11 @@ func (base *baseLeaf) ROOTDecode(b *Buffer) (err error) {
 	obj := b.read_object()
 	dprintf("baseleaf-nobjs: %v\n", obj)
 	if obj != nil {
-		base.leaf_count = obj.(*baseLeaf)
+		base.leaf_count = obj.(ibaseLeaf).toBaseLeaf()
 	}
-	if base.length != 0 {
+
+	b.check_byte_count(pos, bcnt, spos, "TLeaf")
+	if base.length == 0 {
 		//FIXME: ??? really ??? (check with Guy)
 		base.length = 1
 	}
