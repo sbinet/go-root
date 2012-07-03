@@ -4,6 +4,10 @@ import (
 	"reflect"
 )
 
+type ibranch interface {
+	toBranch() *Branch
+}
+
 type Branch struct {
 	name  string
 	title string
@@ -24,6 +28,10 @@ type Branch struct {
 	basketSeek  []int64 // addresses of baskets on file
 }
 
+func (branch *Branch) toBranch() *Branch {
+	return branch
+}
+
 func (branch *Branch) Class() Class {
 	panic("not implemented")
 }
@@ -39,10 +47,9 @@ func (branch *Branch) Title() string {
 func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("vers=%v spos=%v pos=%v bcnt=%v\n", vers, spos, pos, bcnt)
+	printf("[branch] vers=%v spos=%v pos=%v bcnt=%v\n", vers, spos, pos, bcnt)
 	branch.name, branch.title = b.read_tnamed()
-	dprintf("name='%v' title='%v'\n", branch.name, branch.title)
-	dprintf("spos=%v\n", b.Pos())
+	printf("name='%v' title='%v'\n", branch.name, branch.title)
 
 	maxbaskets := uint32(0)
 	splitlvl := int32(0)
@@ -121,22 +128,22 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		b.ntou8() // tot_bytes
 		b.ntou8() // zip_bytes
 	}
-	dprintf("::branch::stream : [%s] split-lvl= %v\n", branch.name, splitlvl)
+	printf("::branch::stream : [%s] split-lvl= %v\n", branch.name, splitlvl)
 
-	dprintf("::branch::stream : branches : begin\n")
+	printf("::branch::stream : branches : begin\n")
 	branches := b.read_obj_array()
-	dprintf("::branch::stream : branches : end\n")
-	dprintf("sub-branches: %v\n", len(branches))
+	printf("::branch::stream : branches : end\n")
+	printf("sub-branches: %v\n", len(branches))
 
-	dprintf("::branch::stream : leaves : begin\n")
+	printf("::branch::stream : leaves : begin\n")
 	leaves := b.read_obj_array()
-	dprintf("::branch::stream : leaves : end\n")
-	dprintf("sub-leaves: %v\n", len(leaves))
+	printf("::branch::stream : leaves : end\n")
+	printf("sub-leaves: %v\n", len(leaves))
 
-	dprintf("::branch::stream : streamed_baskets : begin\n")
+	printf("::branch::stream : streamed_baskets : begin\n")
 	baskets := b.read_obj_array()
-	dprintf("::branch::stream : streamed_baskets : end\n")
-	dprintf("baskets: %v\n", len(baskets))
+	printf("::branch::stream : streamed_baskets : end\n")
+	printf("baskets: %v\n", len(baskets))
 
 	branch.basketEntry = make([]int32, 0, int(maxbaskets))
 	branch.basketBytes = make([]int32, 0, int(maxbaskets))
@@ -205,9 +212,8 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 
 	if vers > 2 {
 		fname := b.read_tstring()
-		dprintf("fname=%s\n", fname)
+		printf("fname=%s\n", fname)
 	}
-	dprintf("spos=%v\n", b.Pos())
 	b.check_byte_count(pos, bcnt, spos, "TBranch")
 	return
 }

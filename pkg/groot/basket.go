@@ -42,7 +42,7 @@ func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 	}
 
 	vers, pos, bcnt := b.read_version()
-	dprintf("vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("basket-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	bufsz := b.ntou4()
 	basket.nev_bufsz = b.ntou4()
 	basket.nev = b.ntou4()
@@ -71,6 +71,7 @@ func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 		err = fmt.Errorf("groot.basket.ROOTDecode: bad flag (=%v)",
 			int(flag))
 	}
+	//FIXME: incomplete!! see basket basket::stream
 	return
 }
 

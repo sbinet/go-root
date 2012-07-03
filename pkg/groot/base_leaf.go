@@ -29,18 +29,18 @@ func (base *baseLeaf) ROOTDecode(b *Buffer) (err error) {
 	spos := b.Pos()
 
 	vers, pos, bcnt := b.read_version()
-	dprintf("baseleaf-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("baseleaf-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	base.name, base.title = b.read_tnamed()
-	dprintf("baseleaf-name='%v' title='%v'\n", base.name, base.title)
+	printf("baseleaf-name='%v' title='%v'\n", base.name, base.title)
 	base.length = b.ntou4()
-	dprintf("baseleaf-length=%v\n", base.length)
+	printf("baseleaf-length=%v\n", base.length)
 	b.ntoi4() // fLengthType
 	b.ntoi4() // fOffset
 	b.ntobyte() // fIsRange
 	b.ntobyte() // fIsUnsigned
 
 	obj := b.read_object()
-	dprintf("baseleaf-nobjs: %v\n", obj)
+	printf("baseleaf-nobjs: %v\n", obj)
 	if obj != nil {
 		base.leaf_count = obj.(ibaseLeaf).toBaseLeaf()
 	}

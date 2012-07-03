@@ -2,18 +2,20 @@ package groot
 
 import (
 	"fmt"
+	"os"
 )
 
 var g_verbose = false
 
 func printf(format string, args ...interface{}) {
 	if g_verbose {
-		fmt.Printf(format, args...)
+		fmt.Fprintf(os.Stderr, format, args...)
 	}
 }
 
 func dprintf(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
+	fmt.Fprintf(os.Stderr, format, args...)
+	//printf(format, args...)
 }
 
 const (

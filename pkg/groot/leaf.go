@@ -4,6 +4,98 @@ import (
 	"reflect"
 )
 
+// leaf of bytes
+
+type LeafB struct {
+	base baseLeaf
+	min int32
+	max int32
+	data []byte
+}
+
+func (leaf *LeafB) toBaseLeaf() *baseLeaf {
+	return &leaf.base
+}
+
+func (leaf *LeafB) Class() Class {
+	panic("not implemented")
+}
+
+func (leaf *LeafB) Name() string {
+	return leaf.base.name
+}
+
+func (leaf *LeafB) Title() string {
+	return leaf.base.title
+}
+
+func (leaf *LeafB) ROOTDecode(b *Buffer) (err error) {
+	spos := b.Pos()
+	vers, pos, bcnt := b.read_version()
+	printf("[leafB] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	err = leaf.base.ROOTDecode(b)
+	if err != nil {
+		return err
+	}
+	leaf.min = b.ntoi4()
+	leaf.max = b.ntoi4()
+	leaf.data = make([]byte, int(leaf.base.length))
+	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafB")
+	return
+}
+
+func (leaf *LeafB) ROOTEncode(b *Buffer) (err error) {
+	//FIXME
+	panic("not implemented")
+}
+
+// leaf of shorts
+
+type LeafS struct {
+	base baseLeaf
+	min int32
+	max int32
+	data []int8
+}
+
+func (leaf *LeafS) toBaseLeaf() *baseLeaf {
+	return &leaf.base
+}
+
+func (leaf *LeafS) Class() Class {
+	panic("not implemented")
+}
+
+func (leaf *LeafS) Name() string {
+	return leaf.base.name
+}
+
+func (leaf *LeafS) Title() string {
+	return leaf.base.title
+}
+
+func (leaf *LeafS) ROOTDecode(b *Buffer) (err error) {
+	spos := b.Pos()
+	vers, pos, bcnt := b.read_version()
+	printf("[leafS] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	err = leaf.base.ROOTDecode(b)
+	if err != nil {
+		return err
+	}
+	leaf.min = b.ntoi4()
+	leaf.max = b.ntoi4()
+	leaf.data = make([]int8, int(leaf.base.length))
+	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafS")
+	return
+}
+
+func (leaf *LeafS) ROOTEncode(b *Buffer) (err error) {
+	//FIXME
+	panic("not implemented")
+}
+
 // leaf of ints
 
 type LeafI struct {
@@ -30,9 +122,9 @@ func (leaf *LeafI) Title() string {
 }
 
 func (leaf *LeafI) ROOTDecode(b *Buffer) (err error) {
-
+	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("leafI-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("leafI-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	err = leaf.base.ROOTDecode(b)
 	if err != nil {
 		return err
@@ -40,7 +132,8 @@ func (leaf *LeafI) ROOTDecode(b *Buffer) (err error) {
 	leaf.min = b.ntoi4()
 	leaf.max = b.ntoi4()
 	leaf.data = make([]int, int(leaf.base.length))
-	dprintf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafI")
 	return
 }
 
@@ -75,9 +168,9 @@ func (leaf *LeafL) Title() string {
 }
 
 func (leaf *LeafL) ROOTDecode(b *Buffer) (err error) {
-
+	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("leafL-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("leafL-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	err = leaf.base.ROOTDecode(b)
 	if err != nil {
 		return err
@@ -85,7 +178,8 @@ func (leaf *LeafL) ROOTDecode(b *Buffer) (err error) {
 	leaf.min = b.ntoi4()
 	leaf.max = b.ntoi4()
 	leaf.data = make([]int64, int(leaf.base.length))
-	dprintf("leafL min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	printf("leafL min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafL")
 	return
 }
 
@@ -120,9 +214,9 @@ func (leaf *LeafF) Title() string {
 }
 
 func (leaf *LeafF) ROOTDecode(b *Buffer) (err error) {
-
+	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("leafF-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("leafF-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	err = leaf.base.ROOTDecode(b)
 	if err != nil {
 		return err
@@ -130,7 +224,8 @@ func (leaf *LeafF) ROOTDecode(b *Buffer) (err error) {
 	leaf.min = b.ntoi4()
 	leaf.max = b.ntoi4()
 	leaf.data = make([]float32, int(leaf.base.length))
-	dprintf("leafF min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	printf("leafF min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafF")
 	return
 }
 
@@ -165,9 +260,9 @@ func (leaf *LeafD) Title() string {
 }
 
 func (leaf *LeafD) ROOTDecode(b *Buffer) (err error) {
-
+	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("leafD-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("leafD-vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	err = leaf.base.ROOTDecode(b)
 	if err != nil {
 		return err
@@ -175,7 +270,8 @@ func (leaf *LeafD) ROOTDecode(b *Buffer) (err error) {
 	leaf.min = b.ntoi4()
 	leaf.max = b.ntoi4()
 	leaf.data = make([]float64, int(leaf.base.length))
-	dprintf("leafD min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	printf("leafD min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafD")
 	return
 }
 
@@ -184,7 +280,126 @@ func (leaf *LeafD) ROOTEncode(b *Buffer) (err error) {
 	panic("not implemented")
 }
 
+// leaf of a string
+
+type LeafC struct {
+	base baseLeaf
+	min int32
+	max int32
+	data string
+}
+
+func (leaf *LeafC) toBaseLeaf() *baseLeaf {
+	return &leaf.base
+}
+
+func (leaf *LeafC) Class() Class {
+	panic("not implemented")
+}
+
+func (leaf *LeafC) Name() string {
+	return leaf.base.name
+}
+
+func (leaf *LeafC) Title() string {
+	return leaf.base.title
+}
+
+func (leaf *LeafC) ROOTDecode(b *Buffer) (err error) {
+	spos := b.Pos()
+	vers, pos, bcnt := b.read_version()
+	printf("[leafC] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	err = leaf.base.ROOTDecode(b)
+	if err != nil {
+		return err
+	}
+	leaf.min = b.ntoi4()
+	leaf.max = b.ntoi4()
+	printf("leafC min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafC")
+	return
+}
+
+func (leaf *LeafC) ROOTEncode(b *Buffer) (err error) {
+	//FIXME
+	panic("not implemented")
+}
+
+// leaf of bool
+
+type LeafO struct {
+	base baseLeaf
+	min int32
+	max int32
+	data []bool
+}
+
+func (leaf *LeafO) toBaseLeaf() *baseLeaf {
+	return &leaf.base
+}
+
+func (leaf *LeafO) Class() Class {
+	panic("not implemented")
+}
+
+func (leaf *LeafO) Name() string {
+	return leaf.base.name
+}
+
+func (leaf *LeafO) Title() string {
+	return leaf.base.title
+}
+
+func (leaf *LeafO) ROOTDecode(b *Buffer) (err error) {
+	spos := b.Pos()
+	vers, pos, bcnt := b.read_version()
+	printf("[leafO] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	err = leaf.base.ROOTDecode(b)
+	if err != nil {
+		return err
+	}
+	leaf.min = b.ntoi4()
+	leaf.max = b.ntoi4()
+	leaf.data= make([]bool, int(leaf.base.length))
+	printf("leafO min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
+	b.check_byte_count(pos,bcnt,spos, "LeafO")
+	return
+}
+
+func (leaf *LeafO) ROOTEncode(b *Buffer) (err error) {
+	//FIXME
+	panic("not implemented")
+}
+
 func init() {
+
+	{
+		f := func() reflect.Value {
+			o := &LeafO{}
+			return reflect.ValueOf(o)
+		}
+		Factory.db["TLeafO"] = f
+		Factory.db["*groot.LeafO"] = f
+	}
+
+	{
+		f := func() reflect.Value {
+			o := &LeafB{}
+			return reflect.ValueOf(o)
+		}
+		Factory.db["TLeafB"] = f
+		Factory.db["*groot.LeafB"] = f
+	}
+
+	{
+		f := func() reflect.Value {
+			o := &LeafS{}
+			return reflect.ValueOf(o)
+		}
+		Factory.db["TLeafS"] = f
+		Factory.db["*groot.LeafS"] = f
+	}
+
 	{
 		f := func() reflect.Value {
 			o := &LeafI{}
@@ -220,6 +435,40 @@ func init() {
 		Factory.db["TLeafD"] = f
 		Factory.db["*groot.LeafD"] = f
 	}
+
+	{
+		f := func() reflect.Value {
+			o := &LeafC{}
+			return reflect.ValueOf(o)
+		}
+		Factory.db["TLeafC"] = f
+		Factory.db["*groot.LeafC"] = f
+	}
 }
+
+// check interfaces
+var _ Object = (*LeafO)(nil)
+var _ ROOTStreamer = (*LeafO)(nil)
+
+var _ Object = (*LeafB)(nil)
+var _ ROOTStreamer = (*LeafB)(nil)
+
+var _ Object = (*LeafS)(nil)
+var _ ROOTStreamer = (*LeafS)(nil)
+
+var _ Object = (*LeafI)(nil)
+var _ ROOTStreamer = (*LeafI)(nil)
+
+var _ Object = (*LeafL)(nil)
+var _ ROOTStreamer = (*LeafL)(nil)
+
+var _ Object = (*LeafF)(nil)
+var _ ROOTStreamer = (*LeafF)(nil)
+
+var _ Object = (*LeafD)(nil)
+var _ ROOTStreamer = (*LeafD)(nil)
+
+var _ Object = (*LeafC)(nil)
+var _ ROOTStreamer = (*LeafC)(nil)
 
 // EOF

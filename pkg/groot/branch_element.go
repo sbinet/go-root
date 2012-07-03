@@ -14,6 +14,10 @@ type BranchElement struct {
 	stype  int // branch streamer type
 }
 
+func (be *BranchElement) toBranch() *Branch {
+	return &be.branch
+}
+
 func (be *BranchElement) Class() Class {
 	panic("not implemented")
 }
@@ -30,7 +34,8 @@ func (be *BranchElement) ROOTDecode(b *Buffer) (err error) {
 
 	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	dprintf("vers=%v spos=%v pos=%v bcnt=%v\n", vers, spos, pos, bcnt)
+	printf("[branch_element] vers=%v spos=%v pos=%v bcnt=%v\n", 
+		vers, spos, pos, bcnt)
 	err = be.branch.ROOTDecode(b)
 	if err != nil {
 		return err

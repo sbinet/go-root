@@ -4,13 +4,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"runtime/pprof"
 	"strings"
 
 	"bitbucket.org/binet/go-root/pkg/groot"
 )
 
 var fname = flag.String("f", "ntuple.root", "ROOT file to inspect")
+var cpuprofile = flag.String("cpuprofile", "cpu.prof", "write cpu profile to file")
 
 func normpath(path []string) string {
 	name := strings.Join(path, "/")
@@ -34,11 +37,22 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 		if i+1 >= nkeys {
 			str = "`--"
 		}
-		fmt.Printf("%s%s %s title='%s' type=%s\n",
-			indent, str, k.Name(), k.Title(), k.Class())
-		if v, ok := k.Value().(*groot.Directory); ok {
+		switch v := k.Value().(type) {
+		default:
+			fmt.Printf("%s%s %s title='%s' type=%s\n",
+				indent, str, k.Name(), k.Title(), k.Class())
+			
+		case *groot.Directory:
+			fmt.Printf("%s%s %s title='%s' type=%s\n",
+				indent, str, 
+				k.Name(), k.Title(), k.Class())
 			path := append(path, k.Name())
 			inspect(v, path, indent+"    ")
+
+		case *groot.Tree:
+			fmt.Printf("%s%s %s title='%s' entries=%v nbranches=%v type=%s\n",
+				indent, str, 
+				k.Name(), k.Title(), v.Entries(), len(v.Branches()), k.Class())
 		}
 	}
 }
@@ -46,6 +60,15 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 func main() {
 	fmt.Printf(":: groot-ls ::\n")
 	flag.Parse()
+
+	if *cpuprofile != "" {
+        f, err := os.Create(*cpuprofile)
+        if err != nil {
+            log.Fatal(err)
+        }
+        pprof.StartCPUProfile(f)
+        defer pprof.StopCPUProfile()
+    }
 
 	f, err := groot.NewFileReader(*fname)
 	if err != nil {

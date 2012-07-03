@@ -199,7 +199,7 @@ func (f *File) read_streamer_infos() (err error) {
 	return
 
 	lst := make(List, 0)
-	dprintf("lst: %v\n", lst)
+	printf("lst: %v\n", lst)
 
 	var buf []byte
 
@@ -224,7 +224,7 @@ func (f *File) read_streamer_infos() (err error) {
 			lst = obj
 		}
 	}
-	dprintf("buf: %v\n", len(buf))
+	printf("buf: %v\n", len(buf))
 
 	return err
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"reflect"
 	"unsafe"
 )
 
@@ -20,7 +21,7 @@ func NewBuffer(data []byte, order binary.ByteOrder, klen uint32) (b *Buffer, err
 		data:  data,
 		klen:  klen,
 	}
-	b.buf = bytes.NewBuffer(b.data[:])
+	b.buf = bytes.NewBuffer(b.data)
 	return
 }
 
@@ -37,7 +38,7 @@ func (b *Buffer) Pos() int {
 }
 
 func (b *Buffer) Len() int {
-	return len(b.Bytes())
+	return b.buf.Len()
 }
 
 func (b *Buffer) Bytes() []byte {
@@ -45,11 +46,12 @@ func (b *Buffer) Bytes() []byte {
 }
 
 func (b *Buffer) clone() *Buffer {
-	bb, err := NewBuffer(b.data[:], b.order, b.klen)
+	bb, err := NewBuffer(b.data, b.order, b.klen)
 	if err != nil {
 		return nil
 	}
-	bb.read_nbytes(b.Pos())
+	bb.buf.Next(b.Pos())
+	//bb.read_nbytes(b.Pos())
 	return bb
 }
 
@@ -59,8 +61,14 @@ func (b *Buffer) rewind_nbytes(nbytes int) {
 }
 
 func (b *Buffer) read_nbytes(nbytes int) (o []byte) {
+	// o = make([]byte, nbytes)
+	// err := binary.Read(b.buf, b.order, o)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// return
 	o = make([]byte, nbytes)
-	err := binary.Read(b.buf, b.order, o)
+	_, err := b.buf.Read(o)
 	if err != nil {
 		panic(err)
 	}
@@ -348,10 +356,10 @@ func (b *Buffer) read_object() (o Object) {
 	startbuf := b.clone()
 
 	clsname, bcnt, isref := b.read_class()
-	dprintf(">>[class=%s] [bcnt=%v] [isref=%v]\n", clsname, bcnt, isref)
+	printf(">>[class=%s] [bcnt=%v] [isref=%v]\n", clsname, bcnt, isref)
 	if isref {
 		bb := b.clone()
-		dprintf("obj_offset: [%v] -> [%v] -> [%v]\n",
+		printf("obj_offset: [%v] -> [%v] -> [%v]\n",
 			bcnt, bcnt-kMapOffset, bcnt-kMapOffset-bb.klen)
 		bb.rewind_nbytes(b.Pos() - int(bcnt - kMapOffset - bb.klen))
 		ii := bb.ntou4()
@@ -381,8 +389,15 @@ func (b *Buffer) read_object() (o Object) {
 
 			factory := Factory.Get(clsname)
 			if factory == nil {
-				dprintf("**err** no factory for class [%s]\n", clsname)
-				return
+				dprintf("**err** no factory for class [%s] (registering a dummy one!)\n", clsname)
+				
+
+				f := func() reflect.Value {
+					o := &dummyObject{}
+					return reflect.ValueOf(o)
+				}
+				Factory.db[clsname] = f
+				factory = Factory.Get(clsname)
 			}
 
 			vv := factory()
@@ -392,7 +407,7 @@ func (b *Buffer) read_object() (o Object) {
 				if err != nil {
 					panic(err)
 				} else {
-					dprintf("--decoded[%s]--\n", o.Name())
+					printf("--decoded[%s/%s]--\n", o.Name(), clsname)
 				}
 			} else {
 				dprintf("**err** class [%s] does not satisfy the ROOTStreamer interface\n", clsname)
@@ -407,27 +422,27 @@ func (b *Buffer) read_class() (name string, bcnt uint32, isref bool) {
 
 	//var bufvers = 0
 	i := b.ntou4()
-	dprintf("..first_int: %x (len=%d)\n", i, b.Len()/8)
+	printf("..first_int: %x (len=%d)\n", i, b.Len()/8)
 	if i == kNullTag {
 		/*empty*/
-		dprintf("read_class: first_int is kNullTag\n")
+		printf("read_class: first_int is kNullTag\n")
 	} else if (i & kByteCountMask) != 0 {
 		//bufvers = 1
-		dprintf("read_class: first_int & kByteCountMask\n")
+		printf("read_class: first_int & kByteCountMask\n")
 		clstag := b.read_class_tag()
 		if clstag == "" {
 			panic("groot.Buffer.read_class: empty class tag")
 		}
 		name = clstag
 		bcnt = uint32(int64(i) & ^kByteCountMask)
-		dprintf("read_class: kNewClassTag: read class name='%s' bcnt=%d\n",
+		printf("read_class: kNewClassTag: read class name='%s' bcnt=%d\n",
 			name, bcnt)
 	} else {
-		dprintf("read_class: first_int %x ==> position toward object.\n", i)
+		printf("read_class: first_int %x ==> position toward object.\n", i)
 		bcnt = uint32(i)
 		isref = true
 	}
-	dprintf("--[cls=%s] [bcnt=%v] [isref=%v]\n", name, bcnt, isref)
+	printf("--[cls=%s] [bcnt=%v] [isref=%v]\n", name, bcnt, isref)
 	return
 }
 
@@ -437,20 +452,20 @@ func (b *Buffer) read_class_tag() (clstag string) {
 	tag_new_class := tag == kNewClassTag
 	tag_class_mask := (int64(tag) & (^int64(kClassMask))) != 0
 
-	dprintf("--tag:%v %x -> new_class=%v class_mask=%v\n", 
+	printf("--tag:%v %x -> new_class=%v class_mask=%v\n", 
 		tag, tag, 
 		tag_new_class,
 		tag_class_mask)
 
 	if tag_new_class {
 		clstag = b.read_string(80)
-		dprintf("--class+tag: [%v] - kNewClassTag\n", clstag)
+		printf("--class+tag: [%v] - kNewClassTag\n", clstag)
 	} else if tag_class_mask {
 		ref := uint32(int64(tag) & (^int64(kClassMask)))
-		dprintf("--class-tag: [%v] & kClassMask -- ref=%d -- recurse\n", 
+		printf("--class-tag: [%v] & kClassMask -- ref=%d -- recurse\n", 
 			clstag, ref)
 		bb := b.clone()
-		dprintf("cl_offset: [%v] -> [%v] -> [%v]\n",
+		printf("cl_offset: [%v] -> [%v] -> [%v]\n",
 			ref, ref-kMapOffset, ref-kMapOffset-bb.klen)
 		bb.rewind_nbytes(b.Pos() - int(ref - kMapOffset - bb.klen))
 		clstag = bb.read_class_tag()
@@ -502,15 +517,15 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 	nobjs := int(b.ntoi4())
 	lbound := b.ntoi4()
 
-	dprintf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' nobjs=%v lbound=%v\n",
+	printf("read_obj_array: vers=%v pos=%v bcnt=%v name='%v' nobjs=%v lbound=%v\n",
 		vers, pos, bcnt, name, nobjs, lbound)
 
-	elmts = make([]Object, nobjs)
+	elmts = make([]Object, 0, nobjs)
 	for i := 0; i < nobjs; i++ {
-		dprintf("read_obj_array: %d/%d...\n", i, nobjs)
+		printf("read_obj_array: %d/%d...\n", i, nobjs)
 		obj := b.read_object()
-		dprintf("read_obj_array: %d/%d...[done]\n", i, nobjs)
-		elmts[i] = obj
+		printf("read_obj_array: %d/%d...[done]\n", i, nobjs)
+		elmts = append(elmts, obj)
 	}
 
 	b.check_byte_count(pos, bcnt, spos, "TObjArray")
@@ -572,24 +587,20 @@ func (b *Buffer) check_byte_count(start, count uint32, spos int, cls string) boo
 		err := fmt.Errorf(
 			"buffer.check_count: object of class [%s] read too few bytes (%d missing)",
 			cls, lenbuf-diff)
-		fmt.Printf("**error** %s\n", err.Error())
+		printf("**error** %s\n", err.Error())
 		//panic(err)
 
-		dprintf("-->pos= %v\n", b.Pos())
 		b.read_nbytes(int(lenbuf-diff))
-		dprintf("-->pos= %v\n", b.Pos())
 		return true
 	}
 	if diff > lenbuf {
 		err := fmt.Errorf(
 			"buffer.check_count: object of class [%s] read too many bytes (%d in excess)",
 			cls, diff-lenbuf)
-		fmt.Printf("**error** %s\n", err.Error())
+		printf("**error** %s\n", err.Error())
 
 		//panic(err)
-		dprintf("-->pos= %v\n", b.Pos())
 		b.rewind_nbytes(int(diff -lenbuf))
-		dprintf("-->pos= %v\n", b.Pos())
 		return true
 	}
 	return false

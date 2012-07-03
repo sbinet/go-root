@@ -1,10 +1,24 @@
 package groot
 
 import (
-	"reflect"
+	//"reflect"
 )
 
+// FIXME: make List a struct ?
+
 type List []Object
+
+func (lst *List) Class() Class {
+	panic("not implemented")
+}
+
+func (lst *List) Name() string {
+	return "list-name"
+}
+
+func (lst *List) Title() string {
+	return "list-title"
+}
 
 func (lst *List) ROOTDecode(b *Buffer) (err error) {
 
@@ -92,13 +106,17 @@ func (lst *List) ROOTEncode(b *Buffer) (err error) {
 
 func init() {
 
-	new_lst := func() reflect.Value {
-		o := make(List, 0)
-		return reflect.ValueOf(&o)
-	}
-
-	Factory.db["TList"] = new_lst
-	Factory.db["*groot.List"] = new_lst
+	//FIXME...
+	// new_lst := func() reflect.Value {
+	// 	o := make(List, 0)
+	// 	return reflect.ValueOf(&o)
+	// }
+	//Factory.db["TList"] = new_lst
+	//Factory.db["*groot.List"] = new_lst
 }
+
+// check interfaces
+var _ Object = (*List)(nil)
+var _ ROOTStreamer = (*List)(nil)
 
 // EOF
