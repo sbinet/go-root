@@ -12,7 +12,7 @@ import (
 	"bitbucket.org/binet/go-root/pkg/groot"
 )
 
-var fname = flag.String("f", "ntuple.root", "ROOT file to inspect")
+var fname = flag.String("f", "", "ROOT file to inspect")
 var detailed = flag.Bool("detailed", false, "enable detailed dump (of trees)")
 //var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
@@ -85,14 +85,19 @@ func main() {
     //     defer pprof.StopCPUProfile()
     // }
 
+	if *fname == "" {
+		fmt.Printf("**error** you have to give a (valid) path to a ROOT file\n")
+		os.Exit(1)
+	}
+
 	f, err := groot.NewFileReader(*fname)
 	if err != nil {
-		fmt.Printf("**error**: %v\n", err)
+		fmt.Printf("**error** %v\n", err)
 		os.Exit(1)
 	}
 
 	if f == nil {
-		fmt.Printf("**error**: invalid file pointer\n")
+		fmt.Printf("**error** invalid file pointer\n")
 		os.Exit(1)
 	}
 
