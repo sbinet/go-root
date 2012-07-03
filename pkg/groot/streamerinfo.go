@@ -12,8 +12,8 @@ type StreamerInfo struct {
 	elmts     []Object
 }
 
-func (si *StreamerInfo) Class() Class {
-	panic("not implemented")
+func (si *StreamerInfo) Class() string {
+	return "TStreamerInfo"
 }
 
 func (si *StreamerInfo) Name() string {

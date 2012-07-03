@@ -14,8 +14,8 @@ func (le *LeafElement) toBaseLeaf() *baseLeaf {
 	return &le.base
 }
 
-func (le *LeafElement) Class() Class {
-	panic("not implemented")
+func (le *LeafElement) Class() string {
+	return "TLeafElement"
 }
 
 func (le *LeafElement) Name() string {

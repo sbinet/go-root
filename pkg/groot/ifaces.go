@@ -37,7 +37,7 @@ type Member interface {
 // Object represents a ROOT object
 type Object interface {
 	// Class returns the ROOT class of this object
-	Class() Class
+	Class() string
 
 	// Name returns the name of this ROOT object
 	Name() string

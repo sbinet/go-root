@@ -8,8 +8,8 @@ import (
 
 type List []Object
 
-func (lst *List) Class() Class {
-	panic("not implemented")
+func (lst *List) Class() string {
+	return "TList"
 }
 
 func (lst *List) Name() string {

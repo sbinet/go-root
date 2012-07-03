@@ -13,7 +13,11 @@ import (
 )
 
 var fname = flag.String("f", "ntuple.root", "ROOT file to inspect")
+var detailed = flag.Bool("detailed", false, "enable detailed dump (of trees)")
 //var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+
+var s_tee = "|--"
+var s_bot = "`--"
 
 func normpath(path []string) string {
 	name := strings.Join(path, "/")
@@ -31,11 +35,11 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 	}
 	keys := dir.Keys()
 	nkeys := len(keys)
-	str := "|--"
+	str := s_tee
 	//fmt.Printf("%s%s -> #%d key(s)\n", indent, name, len(keys))
 	for i, k := range keys {
 		if i+1 >= nkeys {
-			str = "`--"
+			str = s_bot
 		}
 		switch v := k.Value().(type) {
 		default:
@@ -50,9 +54,20 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 			inspect(v, path, indent+"    ")
 
 		case *groot.Tree:
+			nbranches := len(v.Branches())
 			fmt.Printf("%s%s %s title='%s' entries=%v nbranches=%v type=%s\n",
 				indent, str, 
-				k.Name(), k.Title(), v.Entries(), len(v.Branches()), k.Class())
+				k.Name(), k.Title(), v.Entries(), nbranches, k.Class())
+			if *detailed {
+				strbr := s_tee
+				for i,branch := range v.Branches() {
+					if i+1 >= nbranches {
+						strbr = s_bot
+					}
+					fmt.Printf(" %s%s%s %s type=%s\n",
+						indent, "   ", strbr, branch.Name(), branch.Class())
+				}
+			}
 		}
 	}
 }

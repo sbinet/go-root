@@ -18,7 +18,7 @@ func (be *BranchElement) toBranch() *Branch {
 	return &be.branch
 }
 
-func (be *BranchElement) Class() Class {
+func (be *BranchElement) Class() string {
 	panic("not implemented")
 }
 

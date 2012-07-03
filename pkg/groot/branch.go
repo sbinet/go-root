@@ -32,8 +32,8 @@ func (branch *Branch) toBranch() *Branch {
 	return branch
 }
 
-func (branch *Branch) Class() Class {
-	panic("not implemented")
+func (branch *Branch) Class() string {
+	return "TBranch"
 }
 
 func (branch *Branch) Name() string {

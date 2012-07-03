@@ -17,8 +17,8 @@ func (leaf *LeafB) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafB) Class() Class {
-	panic("not implemented")
+func (leaf *LeafB) Class() string {
+	return "TLeafB"
 }
 
 func (leaf *LeafB) Name() string {
@@ -63,8 +63,8 @@ func (leaf *LeafS) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafS) Class() Class {
-	panic("not implemented")
+func (leaf *LeafS) Class() string {
+	return "TLeafS"
 }
 
 func (leaf *LeafS) Name() string {
@@ -109,8 +109,8 @@ func (leaf *LeafI) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafI) Class() Class {
-	panic("not implemented")
+func (leaf *LeafI) Class() string {
+	return "TLeafI"
 }
 
 func (leaf *LeafI) Name() string {
@@ -155,8 +155,8 @@ func (leaf *LeafL) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafL) Class() Class {
-	panic("not implemented")
+func (leaf *LeafL) Class() string {
+	return "TLeafL"
 }
 
 func (leaf *LeafL) Name() string {
@@ -201,8 +201,8 @@ func (leaf *LeafF) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafF) Class() Class {
-	panic("not implemented")
+func (leaf *LeafF) Class() string {
+	return "TLeafF"
 }
 
 func (leaf *LeafF) Name() string {
@@ -247,8 +247,8 @@ func (leaf *LeafD) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafD) Class() Class {
-	panic("not implemented")
+func (leaf *LeafD) Class() string {
+	return "TLeafD"
 }
 
 func (leaf *LeafD) Name() string {
@@ -293,8 +293,8 @@ func (leaf *LeafC) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafC) Class() Class {
-	panic("not implemented")
+func (leaf *LeafC) Class() string {
+	return "TLeafC"
 }
 
 func (leaf *LeafC) Name() string {
@@ -338,8 +338,8 @@ func (leaf *LeafO) toBaseLeaf() *baseLeaf {
 	return &leaf.base
 }
 
-func (leaf *LeafO) Class() Class {
-	panic("not implemented")
+func (leaf *LeafO) Class() string {
+	return "TLeafO"
 }
 
 func (leaf *LeafO) Name() string {

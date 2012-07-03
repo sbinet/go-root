@@ -35,8 +35,8 @@ func (tree *Tree) SetFile(f *File) (err error) {
 	return
 }
 
-func (tree *Tree) Class() Class {
-	panic("not implemented")
+func (tree *Tree) Class() string {
+	return "TTree"
 }
 
 func (tree *Tree) Name() string {

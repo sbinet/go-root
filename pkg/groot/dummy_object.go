@@ -8,8 +8,8 @@ import (
 type dummyObject struct {
 }
 
-func (d *dummyObject) Class() Class {
-	panic("not implemented")
+func (d *dummyObject) Class() string {
+	return "dummy-object-type"
 }
 
 func (d *dummyObject) Name() string {
