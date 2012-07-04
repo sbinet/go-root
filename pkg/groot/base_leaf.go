@@ -45,11 +45,12 @@ func (base *baseLeaf) ROOTDecode(b *Buffer) (err error) {
 		base.leaf_count = obj.(ibaseLeaf).toBaseLeaf()
 	}
 
-	b.check_byte_count(pos, bcnt, spos, "TLeaf")
 	if base.length == 0 {
 		//FIXME: ??? really ??? (check with Guy)
 		base.length = 1
 	}
+
+	b.check_byte_count(pos, bcnt, spos, "TLeaf")
 	return
 }
 

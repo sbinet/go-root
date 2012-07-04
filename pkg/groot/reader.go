@@ -196,9 +196,9 @@ func (f *File) read_header() (err error) {
 func (f *File) read_streamer_infos() (err error) {
 
 	//FIXME:
-	return
-
-	lst := make(List, 0)
+	//return
+	printf(":: read_streamer_infos...\n")
+	lst := List{}
 	printf("lst: %v\n", lst)
 
 	var buf []byte
@@ -223,9 +223,14 @@ func (f *File) read_streamer_infos() (err error) {
 		if ok {
 			lst = obj
 		}
+
+		for i,v := range lst.elmts {
+			printf("lst[%d]= %s %s\n", i, v.Name(), v.Title())
+		}
 	}
 	printf("buf: %v\n", len(buf))
 
+	printf(":: read_streamer_infos... [done]\n")
 	return err
 }
 

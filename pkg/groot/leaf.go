@@ -8,8 +8,8 @@ import (
 
 type LeafB struct {
 	base baseLeaf
-	min int32
-	max int32
+	min byte
+	max byte
 	data []byte
 }
 
@@ -37,8 +37,8 @@ func (leaf *LeafB) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
+	leaf.min = b.ntobyte()
+	leaf.max = b.ntobyte()
 	leaf.data = make([]byte, int(leaf.base.length))
 	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafB")
@@ -54,9 +54,9 @@ func (leaf *LeafB) ROOTEncode(b *Buffer) (err error) {
 
 type LeafS struct {
 	base baseLeaf
-	min int32
-	max int32
-	data []int8
+	min int16
+	max int16
+	data []int16
 }
 
 func (leaf *LeafS) toBaseLeaf() *baseLeaf {
@@ -83,9 +83,9 @@ func (leaf *LeafS) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
-	leaf.data = make([]int8, int(leaf.base.length))
+	leaf.min = b.ntoi2()
+	leaf.max = b.ntoi2()
+	leaf.data = make([]int16, int(leaf.base.length))
 	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafS")
 	return
@@ -146,8 +146,8 @@ func (leaf *LeafI) ROOTEncode(b *Buffer) (err error) {
 
 type LeafL struct {
 	base baseLeaf
-	min int32
-	max int32
+	min int64
+	max int64
 	data []int64
 }
 
@@ -175,8 +175,8 @@ func (leaf *LeafL) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
+	leaf.min = b.ntoi8()
+	leaf.max = b.ntoi8()
 	leaf.data = make([]int64, int(leaf.base.length))
 	printf("leafL min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafL")
@@ -192,8 +192,8 @@ func (leaf *LeafL) ROOTEncode(b *Buffer) (err error) {
 
 type LeafF struct {
 	base baseLeaf
-	min int32
-	max int32
+	min float32
+	max float32
 	data []float32
 }
 
@@ -221,8 +221,8 @@ func (leaf *LeafF) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
+	leaf.min = b.ntof()
+	leaf.max = b.ntof()
 	leaf.data = make([]float32, int(leaf.base.length))
 	printf("leafF min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafF")
@@ -238,8 +238,8 @@ func (leaf *LeafF) ROOTEncode(b *Buffer) (err error) {
 
 type LeafD struct {
 	base baseLeaf
-	min int32
-	max int32
+	min float64
+	max float64
 	data []float64
 }
 
@@ -267,8 +267,8 @@ func (leaf *LeafD) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
+	leaf.min = b.ntod()
+	leaf.max = b.ntod()
 	leaf.data = make([]float64, int(leaf.base.length))
 	printf("leafD min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafD")
@@ -329,8 +329,8 @@ func (leaf *LeafC) ROOTEncode(b *Buffer) (err error) {
 
 type LeafO struct {
 	base baseLeaf
-	min int32
-	max int32
+	min bool
+	max bool
 	data []bool
 }
 
@@ -358,8 +358,8 @@ func (leaf *LeafO) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	leaf.min = b.ntoi4()
-	leaf.max = b.ntoi4()
+	leaf.min = b.read_bool()
+	leaf.max = b.read_bool()
 	leaf.data= make([]bool, int(leaf.base.length))
 	printf("leafO min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
 	b.check_byte_count(pos,bcnt,spos, "LeafO")

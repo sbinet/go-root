@@ -51,7 +51,6 @@ func (b *Buffer) clone() *Buffer {
 		return nil
 	}
 	bb.buf.Next(b.Pos())
-	//bb.read_nbytes(b.Pos())
 	return bb
 }
 
@@ -61,12 +60,6 @@ func (b *Buffer) rewind_nbytes(nbytes int) {
 }
 
 func (b *Buffer) read_nbytes(nbytes int) (o []byte) {
-	// o = make([]byte, nbytes)
-	// err := binary.Read(b.buf, b.order, o)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// return
 	o = make([]byte, nbytes)
 	_, err := b.buf.Read(o)
 	if err != nil {
@@ -143,6 +136,16 @@ func (b *Buffer) ntod() (o float64) {
 	err := binary.Read(b.buf, b.order, &o)
 	if err != nil {
 		panic(err)
+	}
+	return
+}
+
+func (b *Buffer) read_bool() (o bool) {
+	v := b.ntobyte()
+	if v == 0 {
+		o = false
+	} else {
+		o = true
 	}
 	return
 }
@@ -585,22 +588,23 @@ func (b *Buffer) check_byte_count(start, count uint32, spos int, cls string) boo
 	
 	if diff < lenbuf {
 		err := fmt.Errorf(
-			"buffer.check_count: object of class [%s] read too few bytes (%d missing)",
-			cls, lenbuf-diff)
-		printf("**error** %s\n", err.Error())
-		//panic(err)
+			"buffer.check_count: object of class [%s] read too few bytes (%d missing. expected %d, got %d)",
+			cls, lenbuf-diff, lenbuf, diff)
+		panic(err)
 
-		b.read_nbytes(int(lenbuf-diff))
+		//printf("**error** %s\n", err.Error())
+		//b.read_nbytes(int(lenbuf-diff))
 		return true
 	}
 	if diff > lenbuf {
 		err := fmt.Errorf(
-			"buffer.check_count: object of class [%s] read too many bytes (%d in excess)",
-			cls, diff-lenbuf)
-		printf("**error** %s\n", err.Error())
+			"buffer.check_count: object of class [%s] read too many bytes (%d in excess. expected %d, got %d)",
+			cls, diff-lenbuf, lenbuf, diff)
 
-		//panic(err)
-		b.rewind_nbytes(int(diff -lenbuf))
+		panic(err)
+
+		//printf("**error** %s\n", err.Error())
+		//b.rewind_nbytes(int(diff -lenbuf))
 		return true
 	}
 	return false
