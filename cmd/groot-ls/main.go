@@ -9,7 +9,7 @@ import (
 	//"runtime/pprof"
 	"strings"
 
-	"bitbucket.org/binet/go-root/pkg/groot"
+	"github.com/sbinet/go-root/pkg/groot"
 )
 
 var fname = flag.String("f", "", "ROOT file to inspect")

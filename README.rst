@@ -10,7 +10,7 @@ Installation
 
 ::
 
-  $ go get bitbucket.org/binet/go-root/pkg/groot
+  $ go get github.com/sbinet/go-root/pkg/groot
 
 
 Example
@@ -21,7 +21,7 @@ the hierarchical content of a ``ROOT`` file:
 
 ::
 
-  $ go get bitbucket.org/binet/go-root/cmd/groot-ls
+  $ go get github.com/sbinet/go-root/cmd/groot-ls
   $ groot-ls -f my.esd.root
   :: groot-ls ::
   file: 'my.esd.root' (version=53005)
@@ -60,5 +60,5 @@ Documentation
 
 ``groot`` documentation can be found over there:
 
-http://go.pkgdoc.org/bitbucket.org/binet/go-root/pkg/groot
+http://go.pkgdoc.org/github.com/sbinet/go-root/pkg/groot
 
