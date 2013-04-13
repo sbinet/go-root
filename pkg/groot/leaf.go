@@ -8,8 +8,8 @@ import (
 
 type LeafB struct {
 	base baseLeaf
-	min byte
-	max byte
+	min  byte
+	max  byte
 	data []byte
 }
 
@@ -41,7 +41,7 @@ func (leaf *LeafB) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntobyte()
 	leaf.data = make([]byte, int(leaf.base.length))
 	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafB")
+	b.check_byte_count(pos, bcnt, spos, "LeafB")
 	return
 }
 
@@ -54,8 +54,8 @@ func (leaf *LeafB) ROOTEncode(b *Buffer) (err error) {
 
 type LeafS struct {
 	base baseLeaf
-	min int16
-	max int16
+	min  int16
+	max  int16
 	data []int16
 }
 
@@ -87,7 +87,7 @@ func (leaf *LeafS) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntoi2()
 	leaf.data = make([]int16, int(leaf.base.length))
 	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafS")
+	b.check_byte_count(pos, bcnt, spos, "LeafS")
 	return
 }
 
@@ -100,8 +100,8 @@ func (leaf *LeafS) ROOTEncode(b *Buffer) (err error) {
 
 type LeafI struct {
 	base baseLeaf
-	min int32
-	max int32
+	min  int32
+	max  int32
 	data []int
 }
 
@@ -133,7 +133,7 @@ func (leaf *LeafI) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntoi4()
 	leaf.data = make([]int, int(leaf.base.length))
 	printf("leafI min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafI")
+	b.check_byte_count(pos, bcnt, spos, "LeafI")
 	return
 }
 
@@ -146,8 +146,8 @@ func (leaf *LeafI) ROOTEncode(b *Buffer) (err error) {
 
 type LeafL struct {
 	base baseLeaf
-	min int64
-	max int64
+	min  int64
+	max  int64
 	data []int64
 }
 
@@ -179,7 +179,7 @@ func (leaf *LeafL) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntoi8()
 	leaf.data = make([]int64, int(leaf.base.length))
 	printf("leafL min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafL")
+	b.check_byte_count(pos, bcnt, spos, "LeafL")
 	return
 }
 
@@ -192,8 +192,8 @@ func (leaf *LeafL) ROOTEncode(b *Buffer) (err error) {
 
 type LeafF struct {
 	base baseLeaf
-	min float32
-	max float32
+	min  float32
+	max  float32
 	data []float32
 }
 
@@ -225,7 +225,7 @@ func (leaf *LeafF) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntof()
 	leaf.data = make([]float32, int(leaf.base.length))
 	printf("leafF min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafF")
+	b.check_byte_count(pos, bcnt, spos, "LeafF")
 	return
 }
 
@@ -238,8 +238,8 @@ func (leaf *LeafF) ROOTEncode(b *Buffer) (err error) {
 
 type LeafD struct {
 	base baseLeaf
-	min float64
-	max float64
+	min  float64
+	max  float64
 	data []float64
 }
 
@@ -271,7 +271,7 @@ func (leaf *LeafD) ROOTDecode(b *Buffer) (err error) {
 	leaf.max = b.ntod()
 	leaf.data = make([]float64, int(leaf.base.length))
 	printf("leafD min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafD")
+	b.check_byte_count(pos, bcnt, spos, "LeafD")
 	return
 }
 
@@ -284,8 +284,8 @@ func (leaf *LeafD) ROOTEncode(b *Buffer) (err error) {
 
 type LeafC struct {
 	base baseLeaf
-	min int32
-	max int32
+	min  int32
+	max  int32
 	data string
 }
 
@@ -316,7 +316,7 @@ func (leaf *LeafC) ROOTDecode(b *Buffer) (err error) {
 	leaf.min = b.ntoi4()
 	leaf.max = b.ntoi4()
 	printf("leafC min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafC")
+	b.check_byte_count(pos, bcnt, spos, "LeafC")
 	return
 }
 
@@ -329,8 +329,8 @@ func (leaf *LeafC) ROOTEncode(b *Buffer) (err error) {
 
 type LeafO struct {
 	base baseLeaf
-	min bool
-	max bool
+	min  bool
+	max  bool
 	data []bool
 }
 
@@ -360,9 +360,9 @@ func (leaf *LeafO) ROOTDecode(b *Buffer) (err error) {
 	}
 	leaf.min = b.read_bool()
 	leaf.max = b.read_bool()
-	leaf.data= make([]bool, int(leaf.base.length))
+	leaf.data = make([]bool, int(leaf.base.length))
 	printf("leafO min=%v max=%v len=%d\n", leaf.min, leaf.max, len(leaf.data))
-	b.check_byte_count(pos,bcnt,spos, "LeafO")
+	b.check_byte_count(pos, bcnt, spos, "LeafO")
 	return
 }
 

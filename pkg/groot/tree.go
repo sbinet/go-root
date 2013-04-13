@@ -6,22 +6,22 @@ import (
 )
 
 type Tree struct {
-	file     *File
-	name     string
-	title    string
-	entries  uint64
+	file      *File
+	name      string
+	title     string
+	entries   uint64
 	tot_bytes uint64
 	zip_bytes uint64
-	branches []Branch
+	branches  []Branch
 }
 
 func NewTree(file *File, name, title string) (tree *Tree, err error) {
 	tree = &Tree{
-	file: file,
-	name: name,
-	title: title,
-	entries: 0,
-	branches: make([]Branch, 0),
+		file:     file,
+		name:     name,
+		title:    title,
+		entries:  0,
+		branches: make([]Branch, 0),
 	}
 	return
 }
@@ -78,7 +78,7 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		tree.entries = uint64(b.ntod())
 		tree.tot_bytes = uint64(b.ntod())
 		tree.zip_bytes = uint64(b.ntod())
-		b.ntod() //fSaveBytes
+		b.ntod()  //fSaveBytes
 		b.ntoi4() //fTimerInterval
 		b.ntoi4() //fScanField
 		b.ntoi4() //fUpdate
@@ -90,8 +90,8 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		tree.entries = uint64(b.ntod())
 		tree.tot_bytes = uint64(b.ntod())
 		tree.zip_bytes = uint64(b.ntod())
-		b.ntod() //fSaveBytes
-		b.ntod() //fWeight
+		b.ntod()  //fSaveBytes
+		b.ntod()  //fWeight
 		b.ntoi4() //fTimerInterval
 		b.ntoi4() //fScanField
 		b.ntoi4() //fUpdate
@@ -124,13 +124,13 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		b.ntoi8() //fEstimate
 	}
 
-	printf("=> (%s) entries=%v tot_bytes=%v zip_bytes=%v\n", 
+	printf("=> (%s) entries=%v tot_bytes=%v zip_bytes=%v\n",
 		tree.name, tree.entries, tree.tot_bytes, tree.zip_bytes)
 
 	branches := b.read_obj_array()
 	printf("-- #nbranches: %v\n", len(branches))
 	tree.branches = make([]Branch, len(branches))
-	for i,v := range branches {
+	for i, v := range branches {
 		tree.branches[i] = *(v.(ibranch).toBranch())
 	}
 	leaves := b.read_obj_array()
@@ -154,7 +154,7 @@ func (tree *Tree) ROOTDecode(b *Buffer) (err error) {
 		b.read_object() // fBranchRef *TBranchRef
 	}
 
-	b.check_byte_count(pos,bcnt, spos, "TTree")
+	b.check_byte_count(pos, bcnt, spos, "TTree")
 	return
 }
 

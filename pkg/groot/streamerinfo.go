@@ -76,14 +76,14 @@ type seBase struct {
 	name  string
 	title string
 
-	etype    int    // element type
-	esize    int    // sizeof element
-	arrlen   int    // cumulative size of all array dims
-	arrdim   int    // number of array dimensions
+	etype    int     // element type
+	esize    int     // sizeof element
+	arrlen   int     // cumulative size of all array dims
+	arrdim   int     // number of array dimensions
 	maxidx   []int32 // maximum array index for array dimension "dim"
-	offset   int    // element offset in class
-	newtype  int    // new element type when reading
-	typename string // data type name of data member
+	offset   int     // element offset in class
+	newtype  int     // new element type when reading
+	typename string  // data type name of data member
 }
 
 func (se *seBase) Class() string {
@@ -174,7 +174,7 @@ func (se *StreamerBase) ROOTDecode(b *Buffer) (err error) {
 		return err
 	}
 	se.version = int(b.ntoi4())
-	b.check_byte_count(pos,bcnt, spos, "TStreamerBase")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerBase")
 	return
 }
 
@@ -216,8 +216,8 @@ func (se *StreamerBasicType) ROOTEncode(b *Buffer) (err error) {
 // StreamerBasicPointer is a streamer element for a pointer to a builtin type
 type StreamerBasicPointer struct {
 	seBase
-	countvers int // version number of the class with the counter
-	countname string // name of the data member holding the array count
+	countvers  int    // version number of the class with the counter
+	countname  string // name of the data member holding the array count
 	countclass string // name of the class with the counter
 }
 
@@ -274,7 +274,7 @@ func (se *StreamerString) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	b.check_byte_count(pos,bcnt, spos, "TStreamerString")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerString")
 	return
 }
 
@@ -323,7 +323,7 @@ func (se *StreamerObject) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	b.check_byte_count(pos,bcnt, spos, "TStreamerObject")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerObject")
 	return
 }
 
@@ -353,7 +353,7 @@ func (se *StreamerObjectPointer) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	b.check_byte_count(pos,bcnt, spos, "TStreamerObjectPointer")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerObjectPointer")
 	return
 }
 
@@ -383,7 +383,7 @@ func (se *StreamerObjectAny) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	b.check_byte_count(pos,bcnt, spos, "TStreamerObjectAny")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerObjectAny")
 	return
 }
 
@@ -396,7 +396,7 @@ func (se *StreamerObjectAny) ROOTEncode(b *Buffer) (err error) {
 type StreamerSTL struct {
 	seBase
 	stltype int // type of STL container
-	ctype int // type of contained object
+	ctype   int // type of contained object
 }
 
 func (se *StreamerSTL) Class() string {
@@ -407,7 +407,7 @@ func (se *StreamerSTL) ROOTDecode(b *Buffer) (err error) {
 	spos := b.Pos()
 
 	vers, pos, bcnt := b.read_version()
- 	printf("[streamerstl] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("[streamerstl] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	if vers < 2 {
 		panic("groot.StreamerSTL.ROOTDecode: version<2 is not supported")
 	}
@@ -417,9 +417,9 @@ func (se *StreamerSTL) ROOTDecode(b *Buffer) (err error) {
 	}
 	se.stltype = int(b.ntoi4())
 	se.ctype = int(b.ntoi4())
- 	printf("[streamerstl] name='%v' title='%s' type=%d stl=%v ctype=%v\n", 
+	printf("[streamerstl] name='%v' title='%s' type=%d stl=%v ctype=%v\n",
 		se.Name(), se.Title(), se.Type(), se.stltype, se.ctype)
-	b.check_byte_count(pos,bcnt, spos, "TStreamerSTL")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerSTL")
 	return
 }
 
@@ -441,7 +441,7 @@ func (se *StreamerSTLstring) ROOTDecode(b *Buffer) (err error) {
 	spos := b.Pos()
 
 	vers, pos, bcnt := b.read_version()
- 	printf("[streamerstlstr] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
+	printf("[streamerstlstr] vers=%v pos=%v bcnt=%v\n", vers, pos, bcnt)
 	if vers < 2 {
 		panic("groot.StreamerSTLstring.ROOTDecode: version<2 is not supported")
 	}
@@ -449,9 +449,9 @@ func (se *StreamerSTLstring) ROOTDecode(b *Buffer) (err error) {
 	if err != nil {
 		return err
 	}
- 	printf("[streamerstlstr] name='%v' title='%s' type=%d stl=%v ctype=%v\n", 
+	printf("[streamerstlstr] name='%v' title='%s' type=%d stl=%v ctype=%v\n",
 		se.Name(), se.Title(), se.Type(), se.stltype, se.ctype)
-	b.check_byte_count(pos,bcnt, spos, "TStreamerSTLstring")
+	b.check_byte_count(pos, bcnt, spos, "TStreamerSTLstring")
 	return
 }
 

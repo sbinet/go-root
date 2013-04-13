@@ -5,9 +5,9 @@ import (
 )
 
 type LeafElement struct {
-	base   baseLeaf
-	id     int // element serial number in fInfo
-	ltype  int // leaf type
+	base  baseLeaf
+	id    int // element serial number in fInfo
+	ltype int // leaf type
 }
 
 func (le *LeafElement) toBaseLeaf() *baseLeaf {
@@ -30,7 +30,7 @@ func (le *LeafElement) ROOTDecode(b *Buffer) (err error) {
 
 	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	printf("[leafelement] vers=%v spos=%v pos=%v bcnt=%v\n", 
+	printf("[leafelement] vers=%v spos=%v pos=%v bcnt=%v\n",
 		vers, spos, pos, bcnt)
 	err = le.base.ROOTDecode(b)
 	if err != nil {
@@ -61,4 +61,3 @@ func init() {
 // check interfaces
 var _ Object = (*LeafElement)(nil)
 var _ ROOTStreamer = (*LeafElement)(nil)
-

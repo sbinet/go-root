@@ -47,4 +47,3 @@ func init() {
 // check interfaces
 var _ Object = (*dummyObject)(nil)
 var _ ROOTStreamer = (*dummyObject)(nil)
-
