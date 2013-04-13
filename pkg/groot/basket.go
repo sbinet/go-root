@@ -31,7 +31,7 @@ func (basket *Basket) Title() string {
 
 func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 	startpos := b.Len()
-	k,err := NewKey(nil, 0, 0)
+	k, err := NewKey(nil, 0, 0)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 	if basket.last > bufsz {
 		bufsz = basket.last
 	}
-	
+
 	basket_key_len := b.Len() - startpos
 	if basket_key_len != int(basket.key.keysz) {
 		basket.key.keysz = uint16(basket_key_len)
@@ -64,10 +64,10 @@ func (basket *Basket) ROOTDecode(b *Buffer) (err error) {
 		return
 	}
 	// from Guy: adding this useful (?) test
-	if (flag!=1 && flag!=2 &&
-		flag!=11 && flag!=12 &&
-		flag!=41 && flag!=42 &&
-		flag!=51 && flag!=52) {
+	if flag != 1 && flag != 2 &&
+		flag != 11 && flag != 12 &&
+		flag != 41 && flag != 42 &&
+		flag != 51 && flag != 52 {
 		err = fmt.Errorf("groot.basket.ROOTDecode: bad flag (=%v)",
 			int(flag))
 	}

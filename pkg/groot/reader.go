@@ -224,7 +224,7 @@ func (f *File) read_streamer_infos() (err error) {
 			lst = obj
 		}
 
-		for i,v := range lst.elmts {
+		for i, v := range lst.elmts {
 			printf("lst[%d]= %s %s\n", i, v.Name(), v.Title())
 		}
 	}

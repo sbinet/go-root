@@ -364,7 +364,7 @@ func (b *Buffer) read_object() (o Object) {
 		bb := b.clone()
 		printf("obj_offset: [%v] -> [%v] -> [%v]\n",
 			bcnt, bcnt-kMapOffset, bcnt-kMapOffset-bb.klen)
-		bb.rewind_nbytes(b.Pos() - int(bcnt - kMapOffset - bb.klen))
+		bb.rewind_nbytes(b.Pos() - int(bcnt-kMapOffset-bb.klen))
 		ii := bb.ntou4()
 		if (ii & kByteCountMask) != 0 {
 			scls := bb.read_class_tag()
@@ -377,8 +377,8 @@ func (b *Buffer) read_object() (o Object) {
 		/*
 		 // in principle at this point m_pos should be
 		 //   m_buffer+startpos+sizeof(unsigned int)
-		 // but enforce it anyway : 
-		 m_pos = m_buffer+startpos+sizeof(unsigned int); 
+		 // but enforce it anyway :
+		 m_pos = m_buffer+startpos+sizeof(unsigned int);
 		*/
 		b = startbuf //FIXME ??
 		b.read_nbytes(4)
@@ -387,13 +387,12 @@ func (b *Buffer) read_object() (o Object) {
 			o = nil
 			// m_pos = m_buffer+startpos+bcnt+sizeof(unsigned int);
 			b = startbuf
-			b.read_nbytes(int(bcnt+4))
+			b.read_nbytes(int(bcnt + 4))
 		} else {
 
 			factory := Factory.Get(clsname)
 			if factory == nil {
 				dprintf("**err** no factory for class [%s] (registering a dummy one!)\n", clsname)
-				
 
 				f := func() reflect.Value {
 					o := &dummyObject{}
@@ -415,7 +414,7 @@ func (b *Buffer) read_object() (o Object) {
 			} else {
 				dprintf("**err** class [%s] does not satisfy the ROOTStreamer interface\n", clsname)
 			}
-			b.check_byte_count(0,bcnt, spos, clsname)
+			b.check_byte_count(0, bcnt, spos, clsname)
 		}
 	}
 	return o
@@ -455,8 +454,8 @@ func (b *Buffer) read_class_tag() (clstag string) {
 	tag_new_class := tag == kNewClassTag
 	tag_class_mask := (int64(tag) & (^int64(kClassMask))) != 0
 
-	printf("--tag:%v %x -> new_class=%v class_mask=%v\n", 
-		tag, tag, 
+	printf("--tag:%v %x -> new_class=%v class_mask=%v\n",
+		tag, tag,
 		tag_new_class,
 		tag_class_mask)
 
@@ -465,12 +464,12 @@ func (b *Buffer) read_class_tag() (clstag string) {
 		printf("--class+tag: [%v] - kNewClassTag\n", clstag)
 	} else if tag_class_mask {
 		ref := uint32(int64(tag) & (^int64(kClassMask)))
-		printf("--class-tag: [%v] & kClassMask -- ref=%d -- recurse\n", 
+		printf("--class-tag: [%v] & kClassMask -- ref=%d -- recurse\n",
 			clstag, ref)
 		bb := b.clone()
 		printf("cl_offset: [%v] -> [%v] -> [%v]\n",
 			ref, ref-kMapOffset, ref-kMapOffset-bb.klen)
-		bb.rewind_nbytes(b.Pos() - int(ref - kMapOffset - bb.klen))
+		bb.rewind_nbytes(b.Pos() - int(ref-kMapOffset-bb.klen))
 		clstag = bb.read_class_tag()
 		//printf("--class-tag: [%v] & kClassMask\n", clstag)
 	} else {
@@ -493,7 +492,7 @@ func (b *Buffer) read_tnamed() (name, title string) {
 	printf("read_tnamed: vers=%v pos=%v bcnt=%v id=%v bits=%v name='%v' title='%v'\n",
 		vers, pos, bcnt, id, bits, name, title)
 
-	b.check_byte_count(pos,bcnt,spos,"TNamed")
+	b.check_byte_count(pos, bcnt, spos, "TNamed")
 
 	return
 }
@@ -515,7 +514,7 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 		// skip object bits and unique id
 		b.read_nbytes(8)
 	}
-	name :=  b.read_tstring()
+	name := b.read_tstring()
 
 	nobjs := int(b.ntoi4())
 	lbound := b.ntoi4()
@@ -537,30 +536,30 @@ func (b *Buffer) read_obj_array() (elmts []Object) {
 
 func (b *Buffer) read_attline() (color, style, width uint16) {
 	spos := b.Pos()
-	/*vers*/_, pos, bcnt := b.read_version()
+	/*vers*/ _, pos, bcnt := b.read_version()
 	color = b.ntou2()
 	style = b.ntou2()
 	width = b.ntou2()
-	b.check_byte_count(pos,bcnt, spos, "TAttLine")
+	b.check_byte_count(pos, bcnt, spos, "TAttLine")
 	return
 }
 
 func (b *Buffer) read_attfill() (color, style uint16) {
 	spos := b.Pos()
-	/*vers*/_, pos, bcnt := b.read_version()
+	/*vers*/ _, pos, bcnt := b.read_version()
 	color = b.ntou2()
 	style = b.ntou2()
-	b.check_byte_count(pos,bcnt, spos, "TAttFill")
+	b.check_byte_count(pos, bcnt, spos, "TAttFill")
 	return
 }
 
 func (b *Buffer) read_attmarker() (color, style uint16, width float32) {
 	spos := b.Pos()
-	/*vers*/_, pos, bcnt := b.read_version()
+	/*vers*/ _, pos, bcnt := b.read_version()
 	color = b.ntou2()
 	style = b.ntou2()
 	width = b.ntof()
-	b.check_byte_count(pos,bcnt, spos,"TAttMarker")
+	b.check_byte_count(pos, bcnt, spos, "TAttMarker")
 	return
 }
 
@@ -579,13 +578,13 @@ func (b *Buffer) check_byte_count(start, count uint32, spos int, cls string) boo
 		return true
 	}
 
-	lenbuf := uint64(start) + uint64(count) + uint64(unsafe.Sizeof(uint(0)))
+	lenbuf := uint64(start) + uint64(count) + uint64(unsafe.Sizeof(uint32(0)))
 	diff := uint64(b.Pos() - spos)
 
 	if diff == lenbuf {
 		return true
 	}
-	
+
 	if diff < lenbuf {
 		err := fmt.Errorf(
 			"buffer.check_count: object of class [%s] read too few bytes (%d missing. expected %d, got %d)",
@@ -609,4 +608,5 @@ func (b *Buffer) check_byte_count(start, count uint32, spos int, cls string) boo
 	}
 	return false
 }
+
 // EOF
