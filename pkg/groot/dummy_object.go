@@ -25,7 +25,7 @@ func (d *dummyObject) ROOTDecode(b *Buffer) (err error) {
 	spos := b.Pos()
 	vers, pos, bcnt := b.clone().read_version()
 	printf("dummy: vers=%v spos=%v pos=%v bcnt=%v\n", vers, spos, pos, bcnt)
-	b.read_nbytes(int(bcnt) + int(unsafe.Sizeof(uint(0))))
+	b.read_nbytes(int(bcnt) + int(unsafe.Sizeof(uint32(0))))
 	b.check_byte_count(pos, bcnt, spos, "dummy")
 	printf("dummy: vers=%v spos=%v pos=%v bcnt=%v [done]\n", vers, spos, pos, bcnt)
 	return

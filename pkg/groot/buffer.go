@@ -578,7 +578,7 @@ func (b *Buffer) check_byte_count(start, count uint32, spos int, cls string) boo
 		return true
 	}
 
-	lenbuf := uint64(start) + uint64(count) + uint64(unsafe.Sizeof(uint(0)))
+	lenbuf := uint64(start) + uint64(count) + uint64(unsafe.Sizeof(uint32(0)))
 	diff := uint64(b.Pos() - spos)
 
 	if diff == lenbuf {
