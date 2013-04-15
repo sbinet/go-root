@@ -14,6 +14,7 @@ import (
 
 var fname = flag.String("f", "", "ROOT file to inspect")
 var detailed = flag.Bool("detailed", false, "enable detailed dump (of trees)")
+
 //var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 var s_tee = "|--"
@@ -45,10 +46,10 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 		default:
 			fmt.Printf("%s%s %s title='%s' type=%s\n",
 				indent, str, k.Name(), k.Title(), k.Class())
-			
+
 		case *groot.Directory:
 			fmt.Printf("%s%s %s title='%s' type=%s\n",
-				indent, str, 
+				indent, str,
 				k.Name(), k.Title(), k.Class())
 			path := append(path, k.Name())
 			inspect(v, path, indent+"    ")
@@ -56,11 +57,11 @@ func inspect(dir *groot.Directory, path []string, indent string) {
 		case *groot.Tree:
 			nbranches := len(v.Branches())
 			fmt.Printf("%s%s %s title='%s' entries=%v nbranches=%v type=%s\n",
-				indent, str, 
+				indent, str,
 				k.Name(), k.Title(), v.Entries(), nbranches, k.Class())
 			if *detailed {
 				strbr := s_tee
-				for i,branch := range v.Branches() {
+				for i, branch := range v.Branches() {
 					if i+1 >= nbranches {
 						strbr = s_bot
 					}
@@ -77,13 +78,13 @@ func main() {
 	flag.Parse()
 
 	// if *cpuprofile != "" {
-    //     f, err := os.Create(*cpuprofile)
-    //     if err != nil {
-    //         log.Fatal(err)
-    //     }
-    //     pprof.StartCPUProfile(f)
-    //     defer pprof.StopCPUProfile()
-    // }
+	//     f, err := os.Create(*cpuprofile)
+	//     if err != nil {
+	//         log.Fatal(err)
+	//     }
+	//     pprof.StartCPUProfile(f)
+	//     defer pprof.StopCPUProfile()
+	// }
 
 	if *fname == "" {
 		fmt.Printf("**error** you have to give a (valid) path to a ROOT file\n")
