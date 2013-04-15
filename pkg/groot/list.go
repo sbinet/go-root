@@ -123,10 +123,10 @@ func (lst *List) ROOTEncode(b *Buffer) (err error) {
 func init() {
 
 	//FIXME...
-	 new_lst := func() reflect.Value {
-	 	o := List{}
-	 	return reflect.ValueOf(&o)
-	 }
+	new_lst := func() reflect.Value {
+		o := List{}
+		return reflect.ValueOf(&o)
+	}
 	Factory.db["TList"] = new_lst
 	Factory.db["*groot.List"] = new_lst
 }

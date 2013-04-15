@@ -34,8 +34,8 @@ func (base *baseLeaf) ROOTDecode(b *Buffer) (err error) {
 	printf("baseleaf-name='%v' title='%v'\n", base.name, base.title)
 	base.length = b.ntou4()
 	printf("baseleaf-length=%v\n", base.length)
-	b.ntoi4() // fLengthType
-	b.ntoi4() // fOffset
+	b.ntoi4()   // fLengthType
+	b.ntoi4()   // fOffset
 	b.ntobyte() // fIsRange
 	b.ntobyte() // fIsUnsigned
 

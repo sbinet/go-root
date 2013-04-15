@@ -14,15 +14,15 @@ type Branch struct {
 
 	file *File
 
-	autodelete bool
-	branches []Branch
-	leaves   []baseLeaf
-	baskets  []Basket
+	autodelete     bool
+	branches       []Branch
+	leaves         []baseLeaf
+	baskets        []Basket
 	entryOffsetLen uint32 // initial length of fEntryOffset table in the basket buffers
-	writeBasket uint32 // last basket number written
-	entryNumber uint32 // current entry number (last one filled in this branch)
-	readBasket uint32  // current basket number when reading
-	
+	writeBasket    uint32 // last basket number written
+	entryNumber    uint32 // current entry number (last one filled in this branch)
+	readBasket     uint32 // current basket number when reading
+
 	basketBytes []int32 // length of baskets on file
 	basketEntry []int32 // table of first entry of each basket
 	basketSeek  []int64 // addresses of baskets on file
@@ -60,9 +60,9 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		maxbaskets = b.ntou4() // fMaxBaskets
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = b.ntou4()
-		b.ntod() // entries
-		b.ntod() // tot_bytes
-		b.ntod() // zip_bytes
+		b.ntod()  // entries
+		b.ntod()  // tot_bytes
+		b.ntod()  // zip_bytes
 		b.ntoi4() // fOffset
 	} else if vers <= 6 {
 		b.ntoi4() // fCompress
@@ -70,23 +70,23 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		branch.entryOffsetLen = b.ntou4()
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = b.ntou4()
-		b.ntoi4() // fOffset
+		b.ntoi4()              // fOffset
 		maxbaskets = b.ntou4() // fMaxBaskets
-		b.ntod() // entries
-		b.ntod() // tot_bytes
-		b.ntod() // zip_bytes
+		b.ntod()               // entries
+		b.ntod()               // tot_bytes
+		b.ntod()               // zip_bytes
 	} else if vers <= 7 {
 		b.ntoi4() // fCompress
 		b.ntoi4() // fBasketSize
 		branch.entryOffsetLen = b.ntou4()
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = b.ntou4()
-		b.ntoi4() // fOffset
+		b.ntoi4()              // fOffset
 		maxbaskets = b.ntou4() // fMaxBaskets
-		splitlvl = b.ntoi4() // fSplitLevel
-		b.ntod() // entries
-		b.ntod() // tot_bytes
-		b.ntod() // zip_bytes
+		splitlvl = b.ntoi4()   // fSplitLevel
+		b.ntod()               // entries
+		b.ntod()               // tot_bytes
+		b.ntod()               // zip_bytes
 	} else if vers <= 9 {
 		b.read_attfill()
 		b.ntoi4() // fCompress
@@ -94,12 +94,12 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		branch.entryOffsetLen = b.ntou4()
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = b.ntou4()
-		b.ntoi4() // fOffset
+		b.ntoi4()              // fOffset
 		maxbaskets = b.ntou4() // fMaxBaskets
-		splitlvl = b.ntoi4() // fSplitLevel
-		b.ntod() // entries
-		b.ntod() // tot_bytes
-		b.ntod() // zip_bytes
+		splitlvl = b.ntoi4()   // fSplitLevel
+		b.ntod()               // entries
+		b.ntod()               // tot_bytes
+		b.ntod()               // zip_bytes
 	} else if vers <= 10 {
 		b.read_attfill()
 		b.ntoi4() // fCompress
@@ -107,12 +107,12 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		branch.entryOffsetLen = b.ntou4()
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = uint32(b.ntou8()) //fixme ?
-		b.ntoi4() // fOffset
-		maxbaskets = b.ntou4() // fMaxBaskets
-		splitlvl = b.ntoi4() // fSplitLevel
-		b.ntou8() // entries
-		b.ntou8() // tot_bytes
-		b.ntou8() // zip_bytes
+		b.ntoi4()                              // fOffset
+		maxbaskets = b.ntou4()                 // fMaxBaskets
+		splitlvl = b.ntoi4()                   // fSplitLevel
+		b.ntou8()                              // entries
+		b.ntou8()                              // tot_bytes
+		b.ntou8()                              // zip_bytes
 	} else { //vers>=11
 		b.read_attfill()
 		b.ntoi4() // fCompress
@@ -120,13 +120,13 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		branch.entryOffsetLen = b.ntou4()
 		branch.writeBasket = b.ntou4()
 		branch.entryNumber = uint32(b.ntou8()) //fixme ?
-		b.ntoi4() // fOffset
-		maxbaskets = b.ntou4() // fMaxBaskets
-		splitlvl = b.ntoi4() // fSplitLevel
-		b.ntou8() // entries
-		b.ntou8() // fFirstEntry
-		b.ntou8() // tot_bytes
-		b.ntou8() // zip_bytes
+		b.ntoi4()                              // fOffset
+		maxbaskets = b.ntou4()                 // fMaxBaskets
+		splitlvl = b.ntoi4()                   // fSplitLevel
+		b.ntou8()                              // entries
+		b.ntou8()                              // fFirstEntry
+		b.ntou8()                              // tot_bytes
+		b.ntou8()                              // zip_bytes
 	}
 	printf("::branch::stream : [%s] split-lvl= %v\n", branch.name, splitlvl)
 
@@ -147,7 +147,7 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 
 	branch.basketEntry = make([]int32, 0, int(maxbaskets))
 	branch.basketBytes = make([]int32, 0, int(maxbaskets))
-	branch.basketSeek =  make([]int64, int(maxbaskets))
+	branch.basketSeek = make([]int64, int(maxbaskets))
 
 	if vers < 6 {
 		copy(branch.basketEntry, b.read_array_I())
@@ -160,7 +160,7 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 			panic("branch.ROOTDecode of vers<2 *NOT* handled")
 		} else {
 			nseeks := int(b.ntoi4())
-			for i := 0; i<nseeks; i++ {
+			for i := 0; i < nseeks; i++ {
 				branch.basketSeek[i] = int64(b.ntoi4())
 			}
 		}
@@ -179,10 +179,10 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		if isbigfile == 2 {
 			copy(branch.basketSeek, b.read_fast_array_L(int(maxbaskets)))
 		} else {
-			for i := 0; i<int(maxbaskets); i++ {
+			for i := 0; i < int(maxbaskets); i++ {
 				branch.basketSeek[i] = int64(b.ntoi4())
 			}
-			
+
 		}
 	} else { // vers >= 10
 		// see TStreamerInfo::ReadBuffer::ReadBasicPointer
@@ -196,7 +196,7 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		isarray = b.ntobyte()
 		if isarray != 0 {
 			bentries := b.read_fast_array_UL(int(maxbaskets))
-			for _,v := range bentries {
+			for _, v := range bentries {
 				branch.basketEntry = append(branch.basketEntry, int32(v))
 			}
 		}
@@ -204,7 +204,7 @@ func (branch *Branch) ROOTDecode(b *Buffer) (err error) {
 		isarray = b.ntobyte()
 		if isarray != 0 {
 			bentries := b.read_fast_array_UL(int(maxbaskets))
-			for i,v := range bentries {
+			for i, v := range bentries {
 				branch.basketSeek[i] = int64(v)
 			}
 		}

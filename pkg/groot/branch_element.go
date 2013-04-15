@@ -8,10 +8,10 @@ type BranchElement struct {
 	branch Branch
 	object Object
 	class  string // class name of referenced object
-	vers   int // version number of class
-	id     int // element serial number in fInfo
-	btype  int // branch type
-	stype  int // branch streamer type
+	vers   int    // version number of class
+	id     int    // element serial number in fInfo
+	btype  int    // branch type
+	stype  int    // branch streamer type
 }
 
 func (be *BranchElement) toBranch() *Branch {
@@ -34,7 +34,7 @@ func (be *BranchElement) ROOTDecode(b *Buffer) (err error) {
 
 	spos := b.Pos()
 	vers, pos, bcnt := b.read_version()
-	printf("[branch_element] vers=%v spos=%v pos=%v bcnt=%v\n", 
+	printf("[branch_element] vers=%v spos=%v pos=%v bcnt=%v\n",
 		vers, spos, pos, bcnt)
 	err = be.branch.ROOTDecode(b)
 	if err != nil {
@@ -51,7 +51,7 @@ func (be *BranchElement) ROOTDecode(b *Buffer) (err error) {
 		be.class = b.read_tstring()
 		b.read_tstring() // fParentName
 		b.read_tstring() // fCloneName
-		b.ntoi4() // fCheckSum
+		b.ntoi4()        // fCheckSum
 		be.vers = int(b.ntoi4())
 		be.id = int(b.ntoi4())
 		be.btype = int(b.ntoi4())
@@ -82,4 +82,3 @@ func init() {
 // check interfaces
 var _ Object = (*BranchElement)(nil)
 var _ ROOTStreamer = (*BranchElement)(nil)
-
