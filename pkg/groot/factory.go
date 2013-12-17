@@ -16,7 +16,7 @@ func (f *factory) NumKey() int {
 
 func (f *factory) Keys() []string {
 	keys := make([]string, 0, len(f.db))
-	for k, _ := range f.db {
+	for k := range f.db {
 		keys = append(keys, k)
 	}
 	return keys
